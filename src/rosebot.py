@@ -192,7 +192,7 @@ class ArmAndClaw(object):
 
     def raise_arm(self):
         """ Raises the Arm until its touch sensor is pressed. """
-        self.motor.turn_on()
+        self.motor.turn_on(100)
         while True:
             if self.touch_sensor.is_pressed():
                 self.motor.turn_off()
@@ -208,6 +208,16 @@ class ArmAndClaw(object):
                (i.e., 14.2 motor revolutions),
           3. Resets the motor's position to 0.
         """
+        self.raise_arm()
+        self.motor.reset_position()
+        self.motor.turn_on(-100)
+        while True:
+            position=abs(self.motor.get_position())
+            if position >= 14.2:
+                self.motor.turn_off()
+                break
+
+
 
     def move_arm_to_position(self, desired_arm_position):
         """
