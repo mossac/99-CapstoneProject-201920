@@ -20,10 +20,10 @@ def main():
 
     # run_test_raise_arm()
     # run_test_calibrate_arm()
-    run_test_move_arm_to_position()
+    # run_test_move_arm_to_position()
     # run_test_lower_arm()
 
-    real_thing()
+    # real_thing()
 
 
 def real_thing():
@@ -49,9 +49,11 @@ def run_test_calibrate_arm():
 def run_test_move_arm_to_position():
     robot = rosebot.RoseBot()
     robot.arm_and_claw.calibrate_arm()
-    robot.arm_and_claw.move_arm_to_position(0)
+    time.sleep(6)
     robot.arm_and_claw.move_arm_to_position(2500)
+    time.sleep(6)
     robot.arm_and_claw.move_arm_to_position(1500)
+    time.sleep(6)
 
 
 def run_test_lower_arm():
