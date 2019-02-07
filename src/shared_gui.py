@@ -156,6 +156,8 @@ def get_control_frame(window, mqtt_sender):
 ###############################################################################
 # Handlers for Buttons in the Teleoperation frame.
 ###############################################################################
+
+
 def handle_forward(left_entry_box, right_entry_box, mqtt_sender):
     """
     Tells the robot to move using the speeds in the given entry boxes,
@@ -164,6 +166,9 @@ def handle_forward(left_entry_box, right_entry_box, mqtt_sender):
       :type  right_entry_box:  ttk.Entry
       :type  mqtt_sender:      com.MqttClient
     """
+
+    print("forward", left_entry_box.get(), right_entry_box.get())
+    mqtt_sender.send_message("forward", [int(left_entry_box.get()), int(right_entry_box())])
 
 
 def handle_backward(left_entry_box, right_entry_box, mqtt_sender):
@@ -175,6 +180,10 @@ def handle_backward(left_entry_box, right_entry_box, mqtt_sender):
       :type  mqtt_sender:      com.MqttClient
     """
 
+    print("backward", left_entry_box.get(), right_entry_box.get())
+    mqtt_sender.send_message("backward", [-int(left_entry_box.get()), -int(right_entry_box.get())])
+
+
 def handle_left(left_entry_box, right_entry_box, mqtt_sender):
     """
     Tells the robot to move using the speeds in the given entry boxes,
@@ -183,6 +192,9 @@ def handle_left(left_entry_box, right_entry_box, mqtt_sender):
       :type  right_entry_box:  ttk.Entry
       :type  mqtt_sender:      com.MqttClient
     """
+
+    print("left", left_entry_box.get(), right_entry_box.get())
+    mqtt_sender.send_message("left", [-int(left_entry_box.get()), int(right_entry_box.get())])
 
 
 def handle_right(left_entry_box, right_entry_box, mqtt_sender):
@@ -194,12 +206,18 @@ def handle_right(left_entry_box, right_entry_box, mqtt_sender):
       :type  mqtt_sender:      com.MqttClient
     """
 
+    print("right", left_entry_box.get(), right_entry_box.get())
+    mqtt_sender.send_message("right", [int(left_entry_box.get()), -int(right_entry_box.get())])
+
 
 def handle_stop(mqtt_sender):
     """
     Tells the robot to stop.
       :type  mqtt_sender:  com.MqttClient
     """
+
+    print("stop")
+    mqtt_sender.send_message("stop")
 
 
 ###############################################################################
