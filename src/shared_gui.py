@@ -276,6 +276,9 @@ def handle_quit(mqtt_sender):
       :type  mqtt_sender:  com.MqttClient
     """
 
+    print("quit")
+    mqtt_sender.send_message("quit")
+
 
 def handle_exit(mqtt_sender):
     """
@@ -283,3 +286,7 @@ def handle_exit(mqtt_sender):
     Then exit this program.
       :type mqtt_sender: com.MqttClient
     """
+
+    print("exit")
+    mqtt_sender.send_message("quit")
+    mqtt_sender.close()
