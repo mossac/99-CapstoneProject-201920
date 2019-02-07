@@ -40,3 +40,6 @@ class DelegateReceiving(object):
 
     def move_arm_to_position(self, position):
         self.robot.arm_and_claw.move_arm_to_position(position)
+
+    def quit(self):
+        self.quit()
