@@ -56,6 +56,8 @@ def run_test_move_arm_to_position():
 
 def run_test_lower_arm():
     robot = rosebot.RoseBot()
+    robot.arm_and_claw.calibrate_arm()
+    robot.arm_and_claw.raise_arm()
     robot.arm_and_claw.lower_arm()
 
 
