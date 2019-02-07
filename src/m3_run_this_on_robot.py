@@ -17,12 +17,33 @@ def main():
       2. Communicates via MQTT with the GUI code that runs on the LAPTOP.
     """
 
-    run_test_raise_arm()
+    # run_test_raise_arm()
+    # run_test_calibrate_arm()
+    run_test_move_arm_to_position()
+    # run_test_lower_arm()
 
 
 def run_test_raise_arm():
     robot = rosebot.RoseBot()
     robot.arm_and_claw.raise_arm()
+
+
+def run_test_calibrate_arm():
+    robot = rosebot.RoseBot()
+    robot.arm_and_claw.calibrate_arm()
+
+
+def run_test_move_arm_to_position():
+    robot = rosebot.RoseBot()
+    robot.arm_and_claw.calibrate_arm()
+    robot.arm_and_claw.move_arm_to_position(0)
+    robot.arm_and_claw.move_arm_to_position(2500)
+    robot.arm_and_claw.move_arm_to_position(1500)
+
+
+def run_test_lower_arm():
+    robot = rosebot.RoseBot()
+    robot.arm_and_claw.lower_arm()
 
 
 # -----------------------------------------------------------------------------
