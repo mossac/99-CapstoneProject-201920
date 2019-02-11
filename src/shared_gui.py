@@ -16,6 +16,7 @@
 
 import tkinter
 from tkinter import ttk
+import time
 
 
 def get_teleoperation_frame(window, mqtt_sender):
@@ -377,6 +378,7 @@ def handle_exit(mqtt_sender):
 
     print("exit")
     handle_quit(mqtt_sender)
+    time.sleep(1)
     exit()
 
 ###############################################################################
