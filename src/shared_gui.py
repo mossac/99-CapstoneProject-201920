@@ -264,7 +264,7 @@ def handle_move_arm_to_position(arm_position_entry, mqtt_sender):
     """
 
     print("move_arm_to_position", arm_position_entry.get())
-    mqtt_sender.send_message("move_arm_to_position", [float(arm_position_entry.get())])
+    mqtt_sender.send_message("move_arm_to_position", [int(arm_position_entry.get())])
 
 
 ###############################################################################

@@ -74,22 +74,35 @@ class DriveSystem(object):
 
     def go(self, left_wheel_speed, right_wheel_speed):
         """ Makes the left and right wheel motors spin at the given speeds. """
+        self.left_motor.turn_on(left_wheel_speed)
+        self.right_motor.turn_on(right_wheel_speed)
 
     def stop(self):
         """ Stops the left and right wheel motors. """
+        self.left_motor.turn_off()
+        self.right_motor.turn_off()
 
     def go_straight_for_seconds(self, seconds, speed):
         """
         Makes the robot go straight (forward if speed > 0, else backward)
         at the given speed for the given number of seconds.
         """
-
+        start = time.time()
+        self.go(speed, speed)
+        while True:
+            if time.time() - start >= seconds:
+                self.stop()
+                break
     def go_straight_for_inches_using_time(self, inches, speed):
         """
         Makes the robot go straight at the given speed
         for the given number of inches, using the approximate
         conversion factor of 10.0 inches per second at 100 (full) speed.
         """
+        seconds_per_inch_at_100 = 10.0
+        seconds = abs(inches * seconds_per_inch_at_100 / speed)
+
+        self.go_straight_for_seconds(seconds, speed)
 
     def go_straight_for_inches_using_encoder(self, inches, speed):
         """
@@ -97,6 +110,15 @@ class DriveSystem(object):
         at the given speed for the given number of inches,
         using the encoder (degrees traveled sensor) built into the motors.
         """
+
+        start = self.left_motor.get_position()
+        deg_inches = 360 / self.left_motor.WheelCircumference
+        end = self.left_motor.get_position() + (deg_inches * inches)
+        while start + self.left_motor.get_position() <= end:
+            self.go(speed, speed)
+            if start + self.left_motor.get_position() >= end:
+                self.stop()
+                break
 
     # -------------------------------------------------------------------------
     # Methods for driving that use the color sensor.
@@ -189,6 +211,7 @@ class ArmAndClaw(object):
         """
         self.touch_sensor = touch_sensor
         self.motor = Motor('A', motor_type='medium')
+        self.calibration = 0
 
     def raise_arm(self):
         """ Raises the Arm until its touch sensor is pressed. """
@@ -217,26 +240,44 @@ class ArmAndClaw(object):
                 self.motor.turn_off()
                 break
         self.motor.reset_position()
-
-
+        self.calibration = 1
     def move_arm_to_position(self, desired_arm_position):
         """
         Move its Arm to the given position, where 0 means all the way DOWN.
         The robot must have previously calibrated its Arm.
         """
-        if desired_arm_position > self.motor.get_position():
+        if desired_arm_position is not self.motor.get_position():
             while True:
-                self.motor.turn_on(100)
-                if self.motor.get_position() <= desired_arm_position:
-                    self.motor.turn_off()
-                    break
+                if desired_arm_position > self.motor.get_position():
 
+                    self.motor.turn_on(100)
+                    if desired_arm_position <= self.motor.get_position():
+
+                        self.motor.turn_off()
+                        break
+                if desired_arm_position < self.motor.get_position():
+
+                    self.motor.turn_on(-100)
+                    if desired_arm_position >= self.motor.get_position():
+
+                        self.motor.turn_off()
+                        break
 
     def lower_arm(self):
         """
         Lowers the Arm until it is all the way down, i.e., position 0.
         The robot must have previously calibrated its Arm.
         """
+        if self.calibration is 1:
+            if self.motor.get_position() > 0:
+                while True:
+                    self.motor.turn_on(-100)
+                    if self.motor.get_position() is 0:
+                        self.motor.turn_off()
+                        break
+        else:
+            self.calibrate_arm()
+
 
 ###############################################################################
 #    SensorSystem
@@ -332,7 +373,7 @@ class LEDSystem(object):
 ###############################################################################
 ###############################################################################
 class Motor(object):
-
+    WheelCircumference = 1.3 * math.pi
     def __init__(self, port, motor_type='large'):
         # port must be 'A', 'B', 'C', or 'D'.  Use 'arm' as motor_type for Arm.
         if motor_type == 'large':

@@ -3,11 +3,15 @@
   Author:  Your professors (for the framework)
     and Aidan Moss.
   Winter term, 2018-2019.
+  robot:17
+  lock: me430-14
+  combo:6-16-2
 """
 
 import rosebot
 import mqtt_remote_method_calls as com
 import time
+import shared_gui_delegate_on_robot
 
 
 def main():
@@ -20,7 +24,7 @@ def main():
 
 def real_thing():
     robot = rosebot.RoseBot()
-    delegate_recieves = DelegateRecieves(robot)
+    delegate_recieves = shared_gui_delegate_on_robot.DelegateReceiving(robot)
     mqtt_reciever = com.MqttClient(delegate_recieves)
     mqtt_reciever.connect_to_pc()
 
@@ -30,3 +34,4 @@ def real_thing():
 # Calls  main  to start the ball rolling.
 # -----------------------------------------------------------------------------
 main()
+
