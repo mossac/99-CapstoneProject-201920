@@ -21,7 +21,7 @@ def main():
     # run_arm_and_claw_tests()
     # run_drive_system_tests()
 
-    # real_thing()
+    real_thing()
 
 
 def real_thing():
