@@ -376,8 +376,8 @@ def handle_exit(mqtt_sender):
     """
 
     print("exit")
-    mqtt_sender.send_message("quit")
-    mqtt_sender.close()
+    handle_quit(mqtt_sender)
+    exit()
 
 ###############################################################################
 # Handlers for Buttons in the DriveSystem frame.
