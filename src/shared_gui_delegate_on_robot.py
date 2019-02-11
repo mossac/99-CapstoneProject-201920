@@ -43,7 +43,6 @@ class DelegateReceiving(object):
         self.robot.arm_and_claw.move_arm_to_position(position)
 
     def quit(self):
-        self.quit()
         self.is_time_to_stop = True
 
     def go_straight_for_seconds(self,time_entry,speed_entry):
