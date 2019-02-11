@@ -99,7 +99,7 @@ class DriveSystem(object):
         for the given number of inches, using the approximate
         conversion factor of 10.0 inches per second at 100 (full) speed.
         """
-        seconds_per_inch_at_100 = 10.0
+        seconds_per_inch_at_100 = 12.0
         seconds = abs(inches * seconds_per_inch_at_100 / speed)
 
         self.go_straight_for_seconds(seconds, speed)
@@ -111,14 +111,13 @@ class DriveSystem(object):
         using the encoder (degrees traveled sensor) built into the motors.
         """
 
-        start = self.left_motor.get_position()
+        self.left_motor.reset_position()
         deg_inches = 360 / self.left_motor.WheelCircumference
-        end = self.left_motor.get_position() + (deg_inches * inches)
-        while start + self.left_motor.get_position() <= end:
-            self.go(speed, speed)
-            if start + self.left_motor.get_position() >= end:
-                self.stop()
-                break
+        needed = inches * deg_inches
+        self.go(speed, speed)
+        while abs(self.left_motor.get_position() < needed):
+            time.sleep(0.01)
+        self.stop()
 
     # -------------------------------------------------------------------------
     # Methods for driving that use the color sensor.
