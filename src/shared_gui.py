@@ -172,7 +172,7 @@ def get_drive_frame(window,mqtt_sender):
     inches_using_encoder_button.grid(row=3, column=2)
 
     # Set the Button callbacks:
-    Forward_for_seconds_button["command"] = lambda: handle_forward(mqtt_sender,time_entry)
+    Forward_for_seconds_button["command"] = lambda: handle_seconds(mqtt_sender,time_entry)
     inches_using_time_button["command"] = lambda: handle_using_time(mqtt_sender,time_entry)
     inches_using_encoder_button["command"] = lambda: handle_using_encoder(mqtt_sender,time_entry)
 
@@ -324,13 +324,16 @@ def handle_exit(mqtt_sender):
     mqtt_sender.send_message("quit")
     mqtt_sender.close()
 
+
 def handle_seconds(mqtt_sender,time_entry):
     print('forward for:',time_entry.get(),'seconds')
-    mqtt_sender.send_message("go_straight_for_seconds", [100],[int(time_entry.get())])
+    mqtt_sender.send_message("go_straight_for_seconds", [int(time_entry.get())])
+
 
 def handle_using_time(mqtt_sender,time_entry):
     print('Forward for',time_entry.get(),'inches')
-    mqtt_sender.send_message("go_straight_for_inches_using_time", [int(time_entry.get())], [100])
+    mqtt_sender.send_message("go_straight_for_inches_using_time", [int(time_entry.get())])
+
 
 def handle_using_encoder(mqtt_sender,time_entry):
     print('Forward for', time_entry.get(), 'inches')

@@ -43,3 +43,12 @@ class DelegateReceiving(object):
 
     def quit(self):
         self.quit()
+
+    def go_straight_for_seconds(self,time_entry):
+        self.robot.drive_system.go_straight_for_seconds(int(time_entry), 100)
+
+    def go_straight_for_inches_using_time(self,time_entry):
+        self.robot.drive_system.go_straight_for_inches_using_time(int(time_entry),100)
+
+    def go_straight_for_inches_using_encoder(self, time_entry):
+        self.robot.drive_system.go_straight_for_inches_using_encoder(int(time_entry),100)
