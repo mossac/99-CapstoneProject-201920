@@ -99,7 +99,7 @@ class DriveSystem(object):
         for the given number of inches, using the approximate
         conversion factor of 10.0 inches per second at 100 (full) speed.
         """
-        seconds_per_inch_at_100 = 10.0
+        seconds_per_inch_at_100 = 13.0
         seconds = abs(inches * seconds_per_inch_at_100 / speed)
 
         self.go_straight_for_seconds(seconds, speed)

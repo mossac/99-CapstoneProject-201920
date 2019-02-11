@@ -146,6 +146,39 @@ def get_control_frame(window, mqtt_sender):
 
     return frame
 
+def get_drive_frame(window,mqtt_sender):
+    frame = ttk.Frame(window, padding=10, borderwidth=5, relief="ridge")
+    frame.grid()
+
+    # Construct the widgets on the frame:
+    frame_label = ttk.Label(frame, text="Drive System")
+    position_label = ttk.Label(frame, text="Time/Inches:")
+    time_entry = ttk.Entry(frame, width=8)
+
+    Forward_for_seconds_button = ttk.Button(frame, text="Forward For Seconds")
+    inches_using_time_button = ttk.Button(frame, text="Inches using time")
+    inches_using_encoder_button = ttk.Button(frame, text="Inches using encoder")
+    blank_label = ttk.Label(frame, text="")
+
+    # Grid the widgets:
+    frame_label.grid(row=0, column=1)
+    position_label.grid(row=1, column=0)
+    time_entry.grid(row=1, column=1)
+
+
+    blank_label.grid(row=2, column=1)
+    Forward_for_seconds_button.grid(row=3, column=0)
+    inches_using_time_button.grid(row=3, column=1)
+    inches_using_encoder_button.grid(row=3, column=2)
+
+    # Set the Button callbacks:
+    Forward_for_seconds_button["command"] = lambda: handle_forward(mqtt_sender,time_entry)
+    inches_using_time_button["command"] = lambda: handle_using_time(mqtt_sender,time_entry)
+    inches_using_encoder_button["command"] = lambda: handle_using_encoder(mqtt_sender,time_entry)
+
+
+    return frame
+
 ###############################################################################
 ###############################################################################
 # The following specifies, for each Button,
@@ -264,7 +297,7 @@ def handle_move_arm_to_position(arm_position_entry, mqtt_sender):
     """
 
     print("move_arm_to_position", arm_position_entry.get())
-    mqtt_sender.send_message("move_arm_to_position", [int(arm_position_entry.get())])
+    mqtt_sender.send_message("move_arm_to_position", [float(arm_position_entry.get())])
 
 
 ###############################################################################
@@ -290,3 +323,15 @@ def handle_exit(mqtt_sender):
     print("exit")
     mqtt_sender.send_message("quit")
     mqtt_sender.close()
+
+def handle_seconds(mqtt_sender,time_entry):
+    print('forward for:',time_entry.get(),'seconds')
+    mqtt_sender.send_message("go_straight_for_seconds", [100],[int(time_entry.get())])
+
+def handle_using_time(mqtt_sender,time_entry):
+    print('Forward for',time_entry.get(),'inches')
+    mqtt_sender.send_message("go_straight_for_inches_using_time", [int(time_entry.get())], [100])
+
+def handle_using_encoder(mqtt_sender,time_entry):
+    print('Forward for', time_entry.get(), 'inches')
+    mqtt_sender.send_message("go_straight_for_inches_using_encoder", [int(time_entry.get())])
