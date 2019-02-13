@@ -175,6 +175,13 @@ class DriveSystem(object):
         Colors can be integers from 0 to 7 or any of the strings
         listed in the ColorSensor class.
         """
+        if color is str:
+            while self.sensor_system.color_sensor.get_color_as_name()==color:
+                self.go(speed, speed)
+
+        if color is int:
+            while self.sensor_system.color_sensor.get_color()==color:
+                self.go(speed, speed)
 
     # -------------------------------------------------------------------------
     # Methods for driving that use the infrared proximity sensor.
