@@ -171,7 +171,12 @@ class DriveSystem(object):
         Goes forward at the given speed until the robot is less than
         the given number of inches from the nearest object that it senses.
         """
-        while self.sensor_system.
+
+        self.go(speed, speed)
+        while True:
+            if self.sensor_system.ir_proximity_sensor.get_distance_in_inches() < inches:
+                break
+        self.stop()
 
     def go_backward_until_distance_is_greater_than(self, inches, speed):
         """
@@ -179,8 +184,13 @@ class DriveSystem(object):
         the given number of inches from the nearest object that it senses.
         Assumes that it senses an object when it starts.
         """
+        self.go(-speed, -speed)
+        while True:
+            if self.sensor_system.ir_proximity_sensor.get_distance_in_inches() > inches:
+                break
+        self.stop()
 
-    def go_until_distance_is_within(self, delta_inches, speed):
+    def go_until_distance_is_within(self, delta, inches, speed):
         """
         Goes forward or backward, repeated as necessary, until the robot is
         within the given delta of the given inches from the nearest object
@@ -190,6 +200,10 @@ class DriveSystem(object):
         the robot should move until it is between 6.8 and 7.4 inches
         from the object.
         """
+        if self.sensor_system.ir_proximity_sensor.get_distance_in_inches() <= inches:
+            self.go_backward_until_distance_is_greater_than(inches - delta, speed)
+        elif self.sensor_system.ir_proximity_sensor.get_distance_in_inches() >= inches:
+            self.go_forward_until_distance_is_less_than(inches + delta, speed)
 
     # -------------------------------------------------------------------------
     # Methods for driving that use the infrared beacon sensor.
@@ -340,17 +354,15 @@ class SensorSystem(object):
     the Button objects that form part of the BeaconSystem and DisplaySystem.
     Use this object to get   ** any **   sensor reading.
     """
+
     def __init__(self):
         self.touch_sensor = TouchSensor(1)
-        # These need the port numbers
         self.color_sensor = ColorSensor(3)
         self.ir_proximity_sensor = InfraredProximitySensor(4)
-        # self.ir_beacon_sensor = InfraredBeaconSensor()
-
-        # These need some configuration
+        self.camera = Camera()
+        # self.ir_beacon_sensor = InfraredBeaconSensor(4)
         # self.beacon_system =
         # self.display_system =
-        # self.camera =
 
 
 ###############################################################################
