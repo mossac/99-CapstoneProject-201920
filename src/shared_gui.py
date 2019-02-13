@@ -157,10 +157,16 @@ def get_drive_frame(window, mqtt_sender):
     speed_label = ttk.Label(frame, text='Speed: ')
     time_entry = ttk.Entry(frame, width=8)
     speed_entry = ttk.Entry(frame, width=8)
+    color_entry = ttk.Entry(frame, width=8)
+    intensity_entry = ttk.Entry(frame, width=8)
 
     forward_for_seconds_button = ttk.Button(frame, text="Forward For Seconds")
     inches_using_time_button = ttk.Button(frame, text="Inches using time")
     inches_using_encoder_button = ttk.Button(frame, text="Inches using encoder")
+    straight_until_intensity_less_button=ttk.Button(frame, text="Straight Until Intensity Less")
+    straight_until_intensity_greater_button=ttk.Button(frame, text="Straight Until Intensity Greater")
+    straight_until_color_is_button=ttk.Button(frame, text="Straight Until Color Is")
+    straight_until_color_is_not_button=ttk.Button(frame, text="Straight Until Color Is Not")
     blank_label = ttk.Label(frame, text="")
 
     # Grid the widgets:
@@ -179,7 +185,10 @@ def get_drive_frame(window, mqtt_sender):
     forward_for_seconds_button["command"] = lambda: handle_seconds(mqtt_sender, time_entry, speed_entry)
     inches_using_time_button["command"] = lambda: handle_using_time(mqtt_sender, time_entry, speed_entry)
     inches_using_encoder_button["command"] = lambda: handle_using_encoder(mqtt_sender, time_entry, speed_entry)
-
+    straight_until_intensity_less_button["command"] = lambda: handle_using_color_sensor_less(mqtt_sender, intensity_entry, speed_entry)
+    straight_until_intensity_greater_button["command"] = lambda: handle_using_color_sensor_greater(mqtt_sender, intensity_entry, speed_entry)
+    straight_until_color_is_button["command"] = lambda: handle_using_color_sensor_is(mqtt_sender, color_entry, speed_entry)
+    straight_until_color_is_not_button["command"] = lambda: handle_using_color_sensor_is_not(mqtt_sender, color_entry, speed_entry)
     return frame
 
 
@@ -418,3 +427,25 @@ def handle_tone(mqtt_sender, frequency_entry, duration_entry):
 def handle_speak(mqtt_sender, text_entry):
     print("I will speak phrase ", text_entry.get(), ".")
     mqtt_sender.send_message("speak", [str(text_entry.get())])
+
+###############################################################################
+# Handlers for Buttons in the Color Sensor frame.
+###############################################################################
+def handle_using_color_sensor_less(mqtt_sender,color_entry,intensity_entry,speed_entry):
+    print("Go forward with speed =",speed_entry.get(), "until intensity is less than",intensity_entry.get(),".")
+    mqtt_sender.send_message('go_straight_until_intensity_is_less_than'),[float(intensity_entry.get()),float(speed_entry.get())]
+
+def handle_using_color_sensor_greater(mqtt_sender,color_entry,intensity_entry,speed_entry):
+    print("Go forward with speed =",speed_entry.get(), "until intensity is greater than",intensity_entry.get(),".")
+    mqtt_sender.send_message('go_straight_until_intensity_is_greater_than'),[float(intensity_entry.get()),float(speed_entry.get())]
+
+def handle_using_color_sensor_is(mqtt_sender,color_entry,intensity_entry,speed_entry):
+    print("Go forward with speed =",speed_entry.get(), "until color is ",color_entry.get(),".")
+    mqtt_sender.send_message('go_straight_until_color_is'),[(color_entry.get()),float(speed_entry.get())]
+
+
+def handle_using_color_sensor_is_not(mqtt_sender, color_entry, intensity_entry, speed_entry):
+    print("Go forward with speed =", speed_entry.get(), "until color is ", color_entry.get(), ".")
+    mqtt_sender.send_message('go_straight_until_color_is_not'), [(color_entry.get()), float(speed_entry.get())]
+
+
