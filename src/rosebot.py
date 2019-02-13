@@ -133,12 +133,17 @@ class DriveSystem(object):
         Goes straight at the given speed until the intensity returned
         by the color_sensor is less than the given intensity.
         """
+        while intensity >= self.sensor_system.color_sensor:
+            self.go(speed,speed)
+
 
     def go_straight_until_intensity_is_greater_than(self, intensity, speed):
         """
         Goes straight at the given speed until the intensity returned
         by the color_sensor is greater than the given intensity.
         """
+        while intensity <= self.sensor_system.color_sensor:
+            self.go(speed,speed)
 
     def go_straight_until_color_is(self, color, speed):
         """
@@ -153,6 +158,14 @@ class DriveSystem(object):
         then use the   get_color_as_name   method to access
         the color sensor's color.
         """
+
+        if color is str:
+            while self.sensor_system.color_sensor.get_color_as_name()!=color:
+                self.go(speed, speed)
+
+        if color is int:
+            while self.sensor_system.color_sensor.get_color()!=color:
+                self.go(speed, speed)
 
     def go_straight_until_color_is_not(self, color, speed):
         """
