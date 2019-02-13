@@ -180,6 +180,11 @@ def get_drive_frame(window, mqtt_sender):
     forward_for_seconds_button.grid(row=4, column=0)
     inches_using_time_button.grid(row=4, column=1)
     inches_using_encoder_button.grid(row=4, column=2)
+    straight_until_color_is_button.grid(row=5, column=0)
+    straight_until_color_is_not_button.grid(row=5, column=1)
+    straight_until_intensity_greater_button.grid(row=5, column=2)
+    straight_until_intensity_less_button.grid(row=5, column=3)
+
 
     # Set the Button callbacks:
     forward_for_seconds_button["command"] = lambda: handle_seconds(mqtt_sender, time_entry, speed_entry)
