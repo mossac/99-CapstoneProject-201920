@@ -7,6 +7,8 @@
   Winter term, 2018-2019.
 """
 
+import time
+
 
 class DelegateReceiving(object):
 
@@ -45,25 +47,44 @@ class DelegateReceiving(object):
     def quit(self):
         self.is_time_to_stop = True
 
-    def go_straight_for_seconds(self,time_entry,speed_entry):
+    def go_straight_for_seconds(self, time_entry, speed_entry):
         self.robot.drive_system.go_straight_for_seconds(int(time_entry), float(speed_entry))
 
-    def go_straight_for_inches_using_time(self,time_entry,speed_entry):
-        self.robot.drive_system.go_straight_for_inches_using_time(int(time_entry),float(speed_entry))
+    def go_straight_for_inches_using_time(self, time_entry, speed_entry):
+        self.robot.drive_system.go_straight_for_inches_using_time(int(time_entry), float(speed_entry))
 
-    def go_straight_for_inches_using_encoder(self, time_entry,speed_entry):
+    def go_straight_for_inches_using_encoder(self, time_entry, speed_entry):
         self.robot.drive_system.go_straight_for_inches_using_encoder(int(time_entry), float(speed_entry))
 
     def beep(self, n):
-        print('got beep')
-
         for k in range(n):
             self.robot.sound_system.beeper.beep().wait()
 
     def tone(self, frequency, duration):
-        print("got tone")
         self.robot.sound_system.tone_maker.play_tone(frequency, duration)
 
     def speak(self, text):
-        print("got speak")
         self.robot.sound_system.speech_maker.speak(text)
+
+    def m3_pick_up(self, initial_rate, increase_rate, speed):
+        self.robot.drive_system.go_until_distance_is_within(0.1, 1, speed)
+        rate = 1 / initial_rate
+        self.robot.led_system.left_led.turn_on()
+        state = 0
+        while True:
+            if self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches() < 1.2:
+                break
+            if state == 0:
+                self.robot.led_system.left_led.turn_on()
+            elif state == 1:
+                self.robot.led_system.left_led.turn_off()
+                self.robot.led_system.right_led.turn_on()
+            elif state == 2:
+                self.robot.led_system.left_led.turn_on()
+            elif state == 3:
+                self.robot.led_system.left_led.turn_off()
+                self.robot.led_system.right_led.turn_off()
+            state = state % 4
+            time.sleep(1 - rate)
+            rate += 1 / ((1 / rate) + increase_rate)
+        self.robot.arm_and_claw.raise_arm()
