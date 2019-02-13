@@ -171,6 +171,7 @@ class DriveSystem(object):
         Goes forward at the given speed until the robot is less than
         the given number of inches from the nearest object that it senses.
         """
+        while self.sensor_system.
 
     def go_backward_until_distance_is_greater_than(self, inches, speed):
         """
@@ -342,8 +343,8 @@ class SensorSystem(object):
     def __init__(self):
         self.touch_sensor = TouchSensor(1)
         # These need the port numbers
-        # self.color_sensor = ColorSensor()
-        # self.ir_proximity_sensor = InfraredProximitySensor()
+        self.color_sensor = ColorSensor(3)
+        self.ir_proximity_sensor = InfraredProximitySensor(4)
         # self.ir_beacon_sensor = InfraredBeaconSensor()
 
         # These need some configuration
