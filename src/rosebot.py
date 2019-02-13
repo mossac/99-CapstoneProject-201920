@@ -278,7 +278,7 @@ class ArmAndClaw(object):
           1. Raises its Arm until it is all the way UP
                (i.e., its touch sensor is pressed)
           2. Lowers its Arm until it is all the way down
-               (i.e., 14.2 motor revolutions),
+               (i.e., 13.0 motor revolutions),
           3. Resets the motor's position to 0.
         """
         self.raise_arm()
@@ -286,7 +286,7 @@ class ArmAndClaw(object):
         self.motor.turn_on(-100)
         while True:
             position = abs(self.motor.get_position())
-            if position >= (14.2 * 360):
+            if position >= (13.0 * 360):
                 self.motor.turn_off()
                 break
         self.motor.reset_position()
