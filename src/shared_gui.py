@@ -95,7 +95,7 @@ def get_arm_frame(window, mqtt_sender):
     lower_arm_button = ttk.Button(frame, text="Lower arm")
     calibrate_arm_button = ttk.Button(frame, text="Calibrate arm")
     move_arm_button = ttk.Button(frame,
-                                 text="Move arm to position (0 to 5112)")
+                                 text="Move arm to position (0 to 4680)")
     blank_label = ttk.Label(frame, text="")
 
     # Grid the widgets:
