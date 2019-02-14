@@ -140,14 +140,17 @@ class DelegateReceiving(object):
 
 
     def m3_pick_up(self, initial_rate, increase_rate, speed):
-        starting_distance = self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
-        self.robot.drive_system.go_until_distance_is_within(0.1, 1, speed)
-        rate = initial_rate - 1 + increase_rate * (
-                    starting_distance / (1 - self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()))
+        total = 0
+        for x in range(40):
+            total += self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
+        starting_distance = total / 40
+        self.go_straight_for_inches_using_encoder(starting_distance, speed)
+        rate = initial_rate - 1
         self.robot.led_system.left_led.turn_on()
         state = 0
         while True:
-            if self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches() < 1.2:
+            distance = self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
+            if distance < 1:
                 break
             if state == 0:
                 self.robot.led_system.left_led.turn_on()
@@ -160,11 +163,27 @@ class DelegateReceiving(object):
                 self.robot.led_system.left_led.turn_off()
                 self.robot.led_system.right_led.turn_off()
             state = state % 4
-            time.sleep(1 / rate)
-            rate = initial_rate - 1 + increase_rate * (starting_distance / (1 - self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()))
+            try:
+                time.sleep(1 / rate)
+                rate = initial_rate - 1 + increase_rate * (starting_distance / (1 - distance))
+            except ValueError or ZeroDivisionError:
+                rate = initial_rate
+                continue
+        print("finished")
         self.robot.arm_and_claw.raise_arm()
         self.robot.led_system.left_led.turn_off()
         self.robot.led_system.right_led.turn_off()
+        self.stop()
+
+    def m3_camera_pick_up(self, direction, initial_rate, increase_rate, speed, area):
+        if direction == 'left':
+            self.robot.drive_system.spin_counterclockwise_until_sees_object(speed, area)
+            time.sleep(3)
+            self.m3_pick_up(initial_rate, increase_rate, speed, area)
+        elif direction == 'right':
+            self.robot.drive_system.spin_clockwise_until_sees_object(speed, area)
+            time.sleep(3)
+            self.m3_pick_up(initial_rate, increase_rate, speed, area)
 
     def m1_pick_up(self, initial_rate, increase_rate,speed):
         starting_distance = self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
