@@ -249,6 +249,42 @@ def get_sound_system_frame(window, mqtt_sender):
 
     return frame
 
+
+def get_proximity_frame(window, mqtt_sender):
+    """
+      :type  window:       ttk.Frame | ttk.Toplevel
+      :type  mqtt_sender:  com.MqttClient
+    """
+    # Construct the frame to return:
+    frame = ttk.Frame(window, padding=10, borderwidth=5, relief="ridge")
+    frame.grid()
+
+    # Construct the widgets on the frame:
+
+    # Grid the widgets:
+
+    # Set the Button callbacks:
+
+    return frame
+
+
+def get_camera_frame(window, mqtt_sender):
+    """
+      :type  window:       ttk.Frame | ttk.Toplevel
+      :type  mqtt_sender:  com.MqttClient
+    """
+    # Construct the frame to return:
+    frame = ttk.Frame(window, padding=10, borderwidth=5, relief="ridge")
+    frame.grid()
+
+    # Construct the widgets on the frame:
+
+    # Grid the widgets:
+
+    # Set the Button callbacks:
+
+    return frame
+
 ###############################################################################
 ###############################################################################
 # The following specifies, for each Button,
@@ -436,23 +472,30 @@ def handle_speak(mqtt_sender, text_entry):
 ###############################################################################
 # Handlers for Buttons in the Color Sensor frame.
 ###############################################################################
-def handle_using_color_sensor_less(mqtt_sender,color_entry,intensity_entry,speed_entry):
-    print("Go forward with speed =",speed_entry.get(), "until intensity is less than",intensity_entry.get(),".")
-    mqtt_sender.send_message('go_straight_until_intensity_is_less_than'),[float(intensity_entry.get()),float(speed_entry.get())]
-
-def handle_using_color_sensor_greater(mqtt_sender,color_entry,intensity_entry,speed_entry):
-    print("Go forward with speed =",speed_entry.get(), "until intensity is greater than",intensity_entry.get(),".")
-    mqtt_sender.send_message('go_straight_until_intensity_is_greater_than'),[float(intensity_entry.get()),float(speed_entry.get())]
-
-def handle_using_color_sensor_is(mqtt_sender,color_entry,intensity_entry,speed_entry):
-    print("Go forward with speed =",speed_entry.get(), "until color is ",color_entry.get(),".")
-    mqtt_sender.send_message('go_straight_until_color_is'),[(color_entry.get()),float(speed_entry.get())]
 
 
-def handle_using_color_sensor_is_not(mqtt_sender, color_entry, intensity_entry, speed_entry):
+def handle_using_color_sensor_less(mqtt_sender, intensity_entry, speed_entry):
+    print("Go forward with speed =", speed_entry.get(), "until intensity is less than", intensity_entry.get(), ".")
+    mqtt_sender.send_message('go_straight_until_intensity_is_less_than', [float(intensity_entry.get()), float(speed_entry.get())])
+
+
+def handle_using_color_sensor_greater(mqtt_sender, intensity_entry, speed_entry):
+    print("Go forward with speed =", speed_entry.get(), "until intensity is greater than", intensity_entry.get(), ".")
+    mqtt_sender.send_message('go_straight_until_intensity_is_greater_than', [float(intensity_entry.get()), float(speed_entry.get())])
+
+
+def handle_using_color_sensor_is(mqtt_sender, color_entry, speed_entry):
     print("Go forward with speed =", speed_entry.get(), "until color is ", color_entry.get(), ".")
-    mqtt_sender.send_message('go_straight_until_color_is_not'), [(color_entry.get()), float(speed_entry.get())]
+    mqtt_sender.send_message('go_straight_until_color_is', [(color_entry.get()), float(speed_entry.get())])
 
+
+def handle_using_color_sensor_is_not(mqtt_sender, color_entry, speed_entry):
+    print("Go forward with speed =", speed_entry.get(), "until color is ", color_entry.get(), ".")
+    mqtt_sender.send_message('go_straight_until_color_is_not', [(color_entry.get()), float(speed_entry.get())])
+
+###############################################################################
+# Handlers for Buttons in the Proximity frame.
+###############################################################################
 
 def handle_find_object_counterclockwise(mqtt_sender,speed):
     print("Finding object")
@@ -465,3 +508,6 @@ def handle_find_object_clockwise(mqtt_sender,speed):
 def handle_pick_up_object(mqtt_sender):
     print('Picking up object')
     mqtt_sender.send_message('pick_up')
+###############################################################################
+# Handlers for Buttons in the Camera frame.
+###############################################################################
