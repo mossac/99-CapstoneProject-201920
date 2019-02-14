@@ -43,12 +43,12 @@ def main():
     # Frames that are particular to my individual contributions to the project.
     # -------------------------------------------------------------------------
     # DONE: Implement and call get_my_frames(...)
-    camera_frame, proximity_frame = get_personal_frames(main_frame, mqtt_sender)
+    proximity_frame = get_personal_frames(main_frame, mqtt_sender)
 
     # -------------------------------------------------------------------------
     # Grid the frames.
     # -------------------------------------------------------------------------
-    grid_frames(teleop_frame, arm_frame, control_frame, drive_frame,camera_frame,proximity_frame)
+    grid_frames(teleop_frame, arm_frame, control_frame, drive_frame,proximity_frame)
 
     # -------------------------------------------------------------------------
     # The event loop:
@@ -66,10 +66,10 @@ def get_shared_frames(main_frame, mqtt_sender):
 
 
 def get_personal_frames(main_frame,mqtt_sender):
-    camera_frame = shared_gui.get_camera_frame(main_frame, mqtt_sender)
     proximity_frame = get_proximity_sensor_frame(main_frame,mqtt_sender)
 
-    return camera_frame, proximity_frame
+    return  proximity_frame
+
 
 def get_proximity_sensor_frame(window, mqtt_sender):
     # Construct the frame to return:
@@ -84,10 +84,17 @@ def get_proximity_sensor_frame(window, mqtt_sender):
     increase_rate_label = ttk.Label(frame, text="Increase Rate:")
     increase_rate_entry = ttk.Entry(frame, width=8)
 
+    direction_label = ttk.Label(frame, text='Direction:')
+    direction_entry = ttk.Entry(frame, width = 8)
+
     speed_label = ttk.Label(frame, text="Speed:")
     speed_entry = ttk.Entry(frame, width=8)
 
+    area_label = ttk.Label(frame, text="Area:")
+    area_entry = ttk.Entry(frame, width=8)
+
     pick_up_button = ttk.Button(frame, text="Pick up")
+    m1_cam_pick_up =ttk.Button(frame, text='Camera pick up')
 
     # Grid the widgets:
     frame_label.grid(row=0, column=1)
@@ -101,29 +108,45 @@ def get_proximity_sensor_frame(window, mqtt_sender):
     speed_label.grid(row=3, column=0)
     speed_entry.grid(row=3, column=1)
 
-    pick_up_button.grid(row=4, column=1)
+    pick_up_button.grid(row=6, column=1)
+    m1_cam_pick_up.grid(row=6,column=0)
+
+    direction_label.grid(row=5,column=0)
+    direction_entry.grid(row=5,column=1)
+
+    area_label.grid(row=4, column=0)
+    area_entry.grid(row=4, column=1)
+
 
     # Set the Button callbacks:
     pick_up_button["command"] = lambda: handle_pick_up(mqtt_sender, initial_rate_entry, increase_rate_entry, speed_entry)
+    m1_cam_pick_up['command']= lambda: handle_m1_cam_pick_up(mqtt_sender,direction_entry,initial_rate_entry,increase_rate_entry,speed_entry,area_entry)
 
     return frame
 
 
-def handle_pick_up(mqtt_sender, initial_rate_entry, increase_rate_entry, speed_entry):
+def handle_pick_up(mqtt_sender, initial_rate_entry, increase_rate_entry, speed_entry,):
     print("Proximity pick up")
     mqtt_sender.send_message("m1_pick_up", [float(initial_rate_entry.get()),
                                             float(increase_rate_entry.get()),
                                             float(speed_entry.get())])
 
+def handle_m1_cam_pick_up(mqtt_sender,direction_entry,initial_rate_entry,increase_rate_entry,speed_entry,area_entry):
+    print('Picking up using camera')
+    mqtt_sender.send_message("m1_camera_pick__up", [float(initial_rate_entry.get()),
+                                                    float(increase_rate_entry.get()),
+                                                    float(speed_entry.get()),
+                                                    float(direction_entry.get()),
+                                                    float(area_entry.get())])
 
 
 
-def grid_frames(teleop_frame, arm_frame, control_frame, drive_frame, camera_frame,proximity_frame):
+
+def grid_frames(teleop_frame, arm_frame, control_frame, drive_frame,proximity_frame):
     teleop_frame.grid(row=0, column=0)
     arm_frame.grid(row=1, column=0)
     control_frame.grid(row=2, column=0)
     drive_frame.grid(row=3, column=0)
-    camera_frame.grid(row=4, column=0)
     proximity_frame.grid(row=0, column=1)
 
 

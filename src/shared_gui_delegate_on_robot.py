@@ -119,6 +119,7 @@ class DelegateReceiving(object):
     def find_object_counterclockwise(self,speed,area):
         print("Finding object using camera")
         self.robot.drive_system.spin_counterclockwise_until_sees_object(speed,area)
+        self.m3_pick_up(10,10,speed)
 
 
 
@@ -137,7 +138,6 @@ class DelegateReceiving(object):
                         starting_distance / (1 - self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()))
         self.robot.drive_system.stop()
         self.robot.arm_and_claw.raise_arm()
-
 
     def m3_pick_up(self, initial_rate, increase_rate, speed):
         total = 0
@@ -183,17 +183,19 @@ class DelegateReceiving(object):
         elif direction == 'right':
             self.robot.drive_system.spin_clockwise_until_sees_object(speed, area)
             time.sleep(3)
-            self.m3_pick_up(initial_rate, increase_rate, speed, area)
+            self.m3_pick_up(initial_rate, increase_rate, speed)
 
     def m1_pick_up(self, initial_rate, increase_rate,speed):
-        starting_distance = self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
-        self.robot.drive_system.go_until_distance_is_within(0.1, 1, speed)
-        rate = initial_rate + increase_rate * (
-                    starting_distance / (1 - self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()))
-
+        total = 0
+        for x in range(40):
+            total += self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
+        starting_distance = total / 40
+        self.go_straight_for_inches_using_encoder(starting_distance, speed)
+        rate = initial_rate -1
         while True:
             self.robot.sound_system.beeper()
-            if self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches() < 1.2:
+            distance = self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
+            if distance < 1.2:
                 break
             time.sleep(1 / rate)
             rate = initial_rate - 1 + increase_rate * (
@@ -201,3 +203,12 @@ class DelegateReceiving(object):
         self.robot.drive_system.stop()
         self.robot.arm_and_claw.raise_arm()
 
+    def m1_camera_pick_up(self,direction, initial_rate, increase_rate, speed, area):
+        if direction == 'left':
+            self.robot.drive_system.spin_counterclockwise_until_sees_object(speed, area)
+            time.sleep(3)
+            self.m1_pick_up(initial_rate, increase_rate, speed)
+        elif direction == 'right':
+            self.robot.drive_system.spin_clockwise_until_sees_object(speed, area)
+            time.sleep(3)
+            self.m1_pick_up(initial_rate, increase_rate, speed)

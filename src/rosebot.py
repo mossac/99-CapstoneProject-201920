@@ -282,9 +282,9 @@ class DriveSystem(object):
             if b.get_area() >= area:
                 break
         self.stop()
-        while b.center.x < 300:
-            self.right_motor.turn_on(50)
-        self.stop()
+        #while b.center.x < 250:
+        #    self.right_motor.turn_on(50)
+        #self.stop()
 
     def spin_counterclockwise_until_sees_object(self, speed, area):
         """
@@ -300,9 +300,9 @@ class DriveSystem(object):
             if b.get_area() >= area:
                 break
         self.stop()
-        while b.center.x < 300:
-            self.right_motor.turn_on(50)
-        self.stop()
+        #while b.center.x < 250:
+         #   self.right_motor.turn_on(50)
+        #self.stop()
 
 
 
