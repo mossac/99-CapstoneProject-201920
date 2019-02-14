@@ -66,6 +66,20 @@ class DelegateReceiving(object):
     def speak(self, text):
         self.robot.sound_system.speech_maker.speak(text)
 
+    def find_object_clockwise(self,speed):
+        print("Finding object using camera")
+        self.robot.drive_system.spin_clockwise_until_sees_object(speed,)
+
+    def find_object_counterclockwise(self,speed):
+        print("Finding object using camera")
+        self.robot.drive_system.spin_counterclockwise_until_sees_object(speed,)
+
+    def pick_up(self):
+        print('Picking up object')
+
+
+
+
     def m3_pick_up(self, initial_rate, increase_rate, speed):
         self.robot.drive_system.go_until_distance_is_within(0.1, 1, speed)
         rate = 1 / initial_rate

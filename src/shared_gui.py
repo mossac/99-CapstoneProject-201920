@@ -454,3 +454,14 @@ def handle_using_color_sensor_is_not(mqtt_sender, color_entry, intensity_entry, 
     mqtt_sender.send_message('go_straight_until_color_is_not'), [(color_entry.get()), float(speed_entry.get())]
 
 
+def handle_find_object_counterclockwise(mqtt_sender,speed):
+    print("Finding object")
+    mqtt_sender.send_message('find_object_counterclockwise', int(speed))
+
+def handle_find_object_clockwise(mqtt_sender,speed):
+    print("Finding object")
+    mqtt_sender.send_message('find_object_clockwise', int(speed))
+
+def handle_pick_up_object(mqtt_sender):
+    print('Picking up object')
+    mqtt_sender.send_message('pick_up')
