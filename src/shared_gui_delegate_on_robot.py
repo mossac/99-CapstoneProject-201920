@@ -120,9 +120,6 @@ class DelegateReceiving(object):
         print("Finding object using camera")
         self.robot.drive_system.spin_counterclockwise_until_sees_object(speed,area)
 
-    def m1_pick_up(self):
-        print('Picking up object')
-
 
 
     def m2_pick_up(self, initial_rate, increase_rate, speed):
@@ -161,4 +158,20 @@ class DelegateReceiving(object):
         self.robot.arm_and_claw.raise_arm()
         self.robot.led_system.left_led.turn_off()
         self.robot.led_system.right_led.turn_off()
+
+    def m1_pick_up(self, initial_rate, increase_rate,speed):
+        starting_distance = self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
+        self.robot.drive_system.go_until_distance_is_within(0.1, 1, speed)
+        rate = initial_rate + increase_rate * (
+                    starting_distance / (1 - self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()))
+
+        while True:
+            self.robot.sound_system.beeper()
+            if self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches() < 1.2:
+                break
+            time.sleep(1 / rate)
+            rate = initial_rate - 1 + increase_rate * (
+                        starting_distance / (1 - self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()))
+        self.robot.drive_system.stop()
+        self.robot.arm_and_claw.raise_arm()
 

@@ -177,6 +177,9 @@ class DriveSystem(object):
         Colors can be integers from 0 to 7 or any of the strings
         listed in the ColorSensor class.
         """
+        if color is str:
+            while self.sensor_system.color_sensor.get_color_as_name()==color:
+                self.go(speed, speed)
 
             while True:
                 if self.sensor_system.color_sensor.get_color_as_name() != color:
@@ -279,6 +282,9 @@ class DriveSystem(object):
             if b.get_area() >= area:
                 break
         self.stop()
+        while b.center.x < 300:
+            self.right_motor.turn_on(50)
+        self.stop()
 
     def spin_counterclockwise_until_sees_object(self, speed, area):
         """
@@ -294,6 +300,10 @@ class DriveSystem(object):
             if b.get_area() >= area:
                 break
         self.stop()
+        while b.center.x < 300:
+            self.right_motor.turn_on(50)
+        self.stop()
+
 
 
 ###############################################################################
