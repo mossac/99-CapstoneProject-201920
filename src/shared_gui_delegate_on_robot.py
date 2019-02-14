@@ -144,7 +144,8 @@ class DelegateReceiving(object):
         for x in range(40):
             total += self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
         starting_distance = total / 40
-        self.go_straight_for_inches_using_encoder(starting_distance, speed)
+        print("starting distance: ", starting_distance)
+        self.go_until_distance_is_within(speed, 1, 1)
         rate = initial_rate - 1
         self.robot.led_system.left_led.turn_on()
         state = 0

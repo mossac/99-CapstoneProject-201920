@@ -172,7 +172,7 @@ def handle_pick_up(mqtt_sender, initial_rate_entry, increase_rate_entry, speed_e
 
 def handle_camera_pick_up(mqtt_sender, direction_entry, initial_rate_entry, increase_rate_entry, area_entry, speed_entry):
     print("I will pick up object using the camera then proximity.")
-    mqtt_sender.send_message("m3_pick_up", [str(direction_entry.get()), float(initial_rate_entry.get()),
+    mqtt_sender.send_message("m3_camera_pick_up", [str(direction_entry.get()), float(initial_rate_entry.get()),
                                             float(increase_rate_entry.get()), int(area_entry.get()),
                                             float(speed_entry.get())])
 
