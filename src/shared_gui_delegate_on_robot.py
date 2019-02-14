@@ -17,6 +17,10 @@ class DelegateReceiving(object):
         self.robot = robot
         self.is_time_to_stop = False
 
+    ###############################################################################
+    # From Teleoperation Frame
+    ###############################################################################
+
     def forward(self, left_wheel_speed, right_wheel_speed):
         self.robot.drive_system.go(int(left_wheel_speed), int(right_wheel_speed))
     
@@ -32,6 +36,10 @@ class DelegateReceiving(object):
     def stop(self):
         self.robot.drive_system.stop()
 
+    ###############################################################################
+    # From Arm Frame
+    ###############################################################################
+
     def raise_arm(self):
         self.robot.arm_and_claw.raise_arm()
 
@@ -44,8 +52,16 @@ class DelegateReceiving(object):
     def move_arm_to_position(self, position):
         self.robot.arm_and_claw.move_arm_to_position(position)
 
+    ###############################################################################
+    # From Control Frame
+    ###############################################################################
+
     def quit(self):
         self.is_time_to_stop = True
+
+    ###############################################################################
+    # From Drive Frame
+    ###############################################################################
 
     def go_straight_for_seconds(self, time_entry, speed_entry):
         self.robot.drive_system.go_straight_for_seconds(int(time_entry), float(speed_entry))
@@ -55,6 +71,25 @@ class DelegateReceiving(object):
 
     def go_straight_for_inches_using_encoder(self, time_entry, speed_entry):
         self.robot.drive_system.go_straight_for_inches_using_encoder(int(time_entry), float(speed_entry))
+
+    # Color Sensor
+
+    # Proximity
+
+    def go_forward_until_distance_is_less_than(self, speed, inches):
+        self.robot.drive_system.go_forward_until_distance_is_less_than(inches, speed)
+
+    def go_backward_until_distance_is_greater_than(self, speed, inches):
+        self.robot.drive_system.go_backward_until_distance_is_greater_than(inches, speed)
+
+    def go_until_distance_is_within(self, speed, inches, delta):
+        self.robot.drive_system.go_until_distance_is_within(delta, inches, speed)
+
+    # Camera
+
+    ###############################################################################
+    # From Sound_System Frame
+    ###############################################################################
 
     def beep(self, n):
         for k in range(n):
@@ -83,7 +118,8 @@ class DelegateReceiving(object):
     def m3_pick_up(self, initial_rate, increase_rate, speed):
         starting_distance = self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
         self.robot.drive_system.go_until_distance_is_within(0.1, 1, speed)
-        rate = 1 / initial_rate
+        rate = initial_rate - 1 + increase_rate * (
+                    starting_distance / (1 - self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()))
         self.robot.led_system.left_led.turn_on()
         state = 0
         while True:
@@ -100,9 +136,8 @@ class DelegateReceiving(object):
                 self.robot.led_system.left_led.turn_off()
                 self.robot.led_system.right_led.turn_off()
             state = state % 4
-            time.sleep(rate)
-            rate = (self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()) / starting_distance
-            rate += 1 / ((1 / rate) + increase_rate)
+            time.sleep(1 / rate)
+            rate = initial_rate - 1 + increase_rate * (starting_distance / (1 - self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()))
         self.robot.arm_and_claw.raise_arm()
         self.robot.led_system.left_led.turn_off()
         self.robot.led_system.right_led.turn_off()

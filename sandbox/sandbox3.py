@@ -12,18 +12,11 @@
 # at 2 inches--8 hz
 
 while True:
-    starting_distance = float(input("Starting distance:"))
-    if starting_distance == -1.0:
-        break
 
-    rate = 1
+    starting_distance = self.robot.sensor.ir.get()
+
+    initial = 1
 
     while True:
-        dist = float(input("Distance:"))
-        if dist == -1.0:
-            break
-        try:
-            rate = 2 ** ((1 - (dist / starting_distance)) ** (-1))
-        except ZeroDivisionError:
-            rate = 1
+        rate = (starting_distance / dist) * increase
         print(rate)
