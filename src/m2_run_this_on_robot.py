@@ -107,6 +107,11 @@ def run_test_go_straight_for_inches_using_encoder():
     robot.drive_system.go_straight_for_inches_using_encoder(40, 100)
     time.sleep(4)
 
+def runt_test_move_with_increasing_tone():
+    robot=rosebot.RoseBot()
+
+
+
 
 
 # -----------------------------------------------------------------------------

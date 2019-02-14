@@ -81,10 +81,10 @@ def get_proximity_sensor_frame(window, mqtt_sender):
 
     # Construct the widgets on the frame:
     frame_label = ttk.Label(frame, text="Proximity Sensor")
-    initial_rate_label = ttk.Label(frame, text="Initial Rate:")
+    initial_rate_label = ttk.Label(frame, text="Initial Frequency:")
     initial_rate_entry = ttk.Entry(frame, width=8)
 
-    increase_rate_label = ttk.Label(frame, text="Increase Rate:")
+    increase_rate_label = ttk.Label(frame, text="Increase Frequency Rate:")
     increase_rate_entry = ttk.Entry(frame, width=8)
 
     speed_label = ttk.Label(frame, text="Speed:")
@@ -114,7 +114,7 @@ def get_proximity_sensor_frame(window, mqtt_sender):
 
 def handle_pick_up(mqtt_sender, initial_rate_entry, increase_rate_entry, speed_entry):
     print("I will pick up object using the proximity sensor.")
-    mqtt_sender.send_message("m3_pick_up", [float(initial_rate_entry.get()),
+    mqtt_sender.send_message("m2_pick_up", [float(initial_rate_entry.get()),
                                             float(increase_rate_entry.get()),
                                             float(speed_entry.get())])
 
@@ -126,6 +126,7 @@ def grid_frames(teleop_frame, arm_frame, control_frame, drive_frame, sound_frame
     drive_frame.grid(row=3, column=0)
     sound_frame.grid(row=4, column=0)
     proximity_frame.grid(row=5, column=0)
+
 
 
 # -----------------------------------------------------------------------------
