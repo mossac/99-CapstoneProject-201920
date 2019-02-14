@@ -187,7 +187,7 @@ def get_drive_frame(window, mqtt_sender):
 
 
     # Set the Button callbacks:
-    forward_for_seconds_button["command"] = lambda: handle_seconds(mqtt_sender, time_entry, speed_entry)
+    forward_for_seconds_button["command"] = lambda:  handle_seconds(mqtt_sender, time_entry, speed_entry)
     inches_using_time_button["command"] = lambda: handle_using_time(mqtt_sender, time_entry, speed_entry)
     inches_using_encoder_button["command"] = lambda: handle_using_encoder(mqtt_sender, time_entry, speed_entry)
     straight_until_intensity_less_button["command"] = lambda: handle_using_color_sensor_less(mqtt_sender, intensity_entry, speed_entry)
@@ -278,10 +278,33 @@ def get_camera_frame(window, mqtt_sender):
     frame.grid()
 
     # Construct the widgets on the frame:
+    title = ttk.Label(frame,text='Camera Frame')
+
+    speed_label=ttk.Label(frame, text="Speed")
+    speed_entry= ttk.Entry(frame, width = 8)
+
+    area_label=ttk.Label(frame, text="Area")
+    area_entry= ttk.Entry(frame, width = 8)
+
+    clockwise_button = ttk.Button(frame, text= 'Clockwise search')
+    counterclockwise_button= ttk.Button(frame, text="Counterclockwise search")
+
 
     # Grid the widgets:
+    title.grid(row=0, column=1)
+
+    speed_label.grid(row=1, column=0)
+    speed_entry.grid(row=1, column=1)
+
+    area_label.grid(row=1, column=2)
+    area_entry.grid(row=1, column=3)
+
+    clockwise_button.grid(row=4, column=1)
+    counterclockwise_button.grid(row=4, column=2)
 
     # Set the Button callbacks:
+    clockwise_button["command"] = lambda: handle_find_object_clockwise(mqtt_sender, speed_entry, area_entry)
+    counterclockwise_button["command"] = lambda: handle_find_object_counterclockwise(mqtt_sender, speed_entry,area_entry)
 
     return frame
 
@@ -497,17 +520,21 @@ def handle_using_color_sensor_is_not(mqtt_sender, color_entry, speed_entry):
 # Handlers for Buttons in the Proximity frame.
 ###############################################################################
 
-def handle_find_object_counterclockwise(mqtt_sender,speed):
-    print("Finding object")
-    mqtt_sender.send_message('find_object_counterclockwise', int(speed))
+###############################################################################
+# Handlers for Buttons in the Camera frame.
+###############################################################################
 
-def handle_find_object_clockwise(mqtt_sender,speed):
+
+def handle_find_object_counterclockwise(mqtt_sender,speed_entry,area_entry):
     print("Finding object")
-    mqtt_sender.send_message('find_object_clockwise', int(speed))
+    mqtt_sender.send_message('find_object_counterclockwise', [float(speed_entry.get()),float(area_entry.get())])
+
+
+def handle_find_object_clockwise(mqtt_sender,speed_entry,area_entry):
+    print("Finding object")
+    mqtt_sender.send_message('find_object_clockwise', [float(speed_entry.get()),float(area_entry.get())])
+
 
 def handle_pick_up_object(mqtt_sender):
     print('Picking up object')
     mqtt_sender.send_message('pick_up')
-###############################################################################
-# Handlers for Buttons in the Camera frame.
-###############################################################################

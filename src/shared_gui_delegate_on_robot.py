@@ -66,15 +66,15 @@ class DelegateReceiving(object):
     def speak(self, text):
         self.robot.sound_system.speech_maker.speak(text)
 
-    def find_object_clockwise(self,speed):
+    def find_object_clockwise(self,speed,area):
         print("Finding object using camera")
-        self.robot.drive_system.spin_clockwise_until_sees_object(speed,)
+        self.robot.drive_system.spin_clockwise_until_sees_object(speed,area)
 
-    def find_object_counterclockwise(self,speed):
+    def find_object_counterclockwise(self,speed,area):
         print("Finding object using camera")
-        self.robot.drive_system.spin_counterclockwise_until_sees_object(speed,)
+        self.robot.drive_system.spin_counterclockwise_until_sees_object(speed,area)
 
-    def pick_up(self):
+    def m1_pick_up(self):
         print('Picking up object')
 
 
