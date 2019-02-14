@@ -8,6 +8,7 @@
 import rosebot
 import mqtt_remote_method_calls as com
 import time
+import shared_gui_delegate_on_robot
 
 
 def main():
@@ -107,7 +108,7 @@ def run_test_go_straight_for_inches_using_encoder():
     robot.drive_system.go_straight_for_inches_using_encoder(40, 100)
     time.sleep(4)
 
-def runt_test_move_with_increasing_tone():
+def run_test_move_with_increasing_tone():
     robot=rosebot.RoseBot()
 
 

@@ -162,6 +162,8 @@ def get_drive_frame(window, mqtt_sender):
     speed_entry = ttk.Entry(frame, width=8)
     color_entry = ttk.Entry(frame, width=8)
     intensity_entry = ttk.Entry(frame, width=8)
+    initial_rate_entry=ttk.Entry(frame, width=8)
+    increase_rate_entry=ttk.Entry(frame, width=8)
 
     forward_for_seconds_button = ttk.Button(frame, text="Forward For Seconds")
     inches_using_time_button = ttk.Button(frame, text="Inches using time")
@@ -524,4 +526,3 @@ def handle_speak(mqtt_sender, text_entry):
     print("I will speak phrase ", text_entry.get(), ".")
     mqtt_sender.send_message("speak", [str(text_entry.get())])
 
-#def handle_m2(mqtt_sender, frequency_entry):
