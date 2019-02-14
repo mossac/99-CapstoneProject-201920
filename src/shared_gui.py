@@ -490,7 +490,7 @@ def handle_go_backward_until_distance_is_greater_than(mqtt_sender, speed_entry, 
 
 def handle_go_until_distance_is_within(mqtt_sender, speed_entry, inches_entry, delta_entry):
     print("Going until distance is within ", delta_entry.get(), " of ", inches_entry.get())
-    mqtt_sender.send_message('go_forward_until_distance_is_less_than',
+    mqtt_sender.send_message('go_until_distance_is_within',
                              [float(speed_entry.get()), float(inches_entry.get()), float(delta_entry.get())])
 
 # Camera
