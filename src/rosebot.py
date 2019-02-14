@@ -133,17 +133,22 @@ class DriveSystem(object):
         Goes straight at the given speed until the intensity returned
         by the color_sensor is less than the given intensity.
         """
-        while intensity >= self.sensor_system.color_sensor:
-            self.go(speed,speed)
-
+        while True:
+            if self.sensor_system.color_sensor.get_ambient_light_intensity() < intensity:
+                self.stop()
+                break
+            self.go(speed, speed)
 
     def go_straight_until_intensity_is_greater_than(self, intensity, speed):
         """
         Goes straight at the given speed until the intensity returned
         by the color_sensor is greater than the given intensity.
         """
-        while intensity <= self.sensor_system.color_sensor:
-            self.go(speed,speed)
+        while True:
+            if self.sensor_system.color_sensor.get_ambient_light_intensity() > intensity:
+                self.stop()
+                break
+            self.go(speed, speed)
 
     def go_straight_until_color_is(self, color, speed):
         """
@@ -159,14 +164,11 @@ class DriveSystem(object):
         the color sensor's color.
         """
 
-        if color is str:
-            while self.sensor_system.color_sensor.get_color_as_name()!=color:
-                self.go(speed, speed)
-
-        if color is int:
-            while self.sensor_system.color_sensor.get_color()!=color:
-                self.go(speed, speed)
-
+        while True:
+            if self.sensor_system.color_sensor.get_color_as_name() == color:
+                self.stop()
+                break
+            self.go(speed, speed)
     def go_straight_until_color_is_not(self, color, speed):
         """
         Goes straight at the given speed until the color returned
@@ -175,12 +177,11 @@ class DriveSystem(object):
         Colors can be integers from 0 to 7 or any of the strings
         listed in the ColorSensor class.
         """
-        if color is str:
-            while self.sensor_system.color_sensor.get_color_as_name()==color:
-                self.go(speed, speed)
 
-        if color is int:
-            while self.sensor_system.color_sensor.get_color()==color:
+            while True:
+                if self.sensor_system.color_sensor.get_color_as_name() != color:
+                    self.stop()
+                    break
                 self.go(speed, speed)
 
     # -------------------------------------------------------------------------
