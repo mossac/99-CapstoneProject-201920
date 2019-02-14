@@ -153,9 +153,12 @@ def get_drive_frame(window, mqtt_sender):
 
     # Construct the widgets on the frame:
     frame_label = ttk.Label(frame, text="Drive System")
+
     position_label = ttk.Label(frame, text="Time/Inches:")
-    speed_label = ttk.Label(frame, text='Speed: ')
-    time_entry = ttk.Entry(frame, width=8)
+    speed_label = ttk.Label(frame, text='Speed:')
+    color_label = ttk.Label(frame, text='Color:')
+    intensity_label = ttk.Label(frame, text='Intensity:')
+    position_entry = ttk.Entry(frame, width=8)
     speed_entry = ttk.Entry(frame, width=8)
     color_entry = ttk.Entry(frame, width=8)
     intensity_entry = ttk.Entry(frame, width=8)
@@ -163,37 +166,70 @@ def get_drive_frame(window, mqtt_sender):
     forward_for_seconds_button = ttk.Button(frame, text="Forward For Seconds")
     inches_using_time_button = ttk.Button(frame, text="Inches using time")
     inches_using_encoder_button = ttk.Button(frame, text="Inches using encoder")
-    straight_until_intensity_less_button=ttk.Button(frame, text="Straight Until Intensity Less")
-    straight_until_intensity_greater_button=ttk.Button(frame, text="Straight Until Intensity Greater")
-    straight_until_color_is_button=ttk.Button(frame, text="Straight Until Color Is")
-    straight_until_color_is_not_button=ttk.Button(frame, text="Straight Until Color Is Not")
-    blank_label = ttk.Label(frame, text="")
+
+    straight_until_intensity_less_button = ttk.Button(frame, text="Straight Until Intensity Less")
+    straight_until_intensity_greater_button = ttk.Button(frame, text="Straight Until Intensity Greater")
+    straight_until_color_is_button = ttk.Button(frame, text="Straight Until Color Is")
+    straight_until_color_is_not_button = ttk.Button(frame, text="Straight Until Color Is Not")
+
+    delta_label = ttk.Label(frame, text="Within:")
+    delta_entry = ttk.Entry(frame, width=8)
+    go_forward_until_distance_is_less_than_button = ttk.Button(frame, text="Go Forward Until Less Than")
+    go_backward_until_distance_is_greater_than_button = ttk.Button(frame, text="Go Backward Until Greater Than")
+    go_until_distance_is_within_button = ttk.Button(frame, text="Go Until Within")
+
+    area_label = ttk.Label(frame, text="Area")
+    area_entry = ttk.Entry(frame, width=8)
+    clockwise_button = ttk.Button(frame, text='Clockwise search')
+    counterclockwise_button = ttk.Button(frame, text="Counterclockwise search")
 
     # Grid the widgets:
     frame_label.grid(row=0, column=1)
     position_label.grid(row=1, column=0)
-    time_entry.grid(row=1, column=1)
-    speed_label.grid(row=2, column=0)
+    position_entry.grid(row=2, column=0)
+    speed_label.grid(row=1, column=1)
     speed_entry.grid(row=2, column=1)
+    forward_for_seconds_button.grid(row=5, column=0)
+    inches_using_time_button.grid(row=5, column=1)
+    inches_using_encoder_button.grid(row=5, column=2)
 
-    blank_label.grid(row=3, column=1)
-    forward_for_seconds_button.grid(row=4, column=0)
-    inches_using_time_button.grid(row=4, column=1)
-    inches_using_encoder_button.grid(row=4, column=2)
-    straight_until_color_is_button.grid(row=5, column=0)
-    straight_until_color_is_not_button.grid(row=5, column=1)
-    straight_until_intensity_greater_button.grid(row=5, column=2)
-    straight_until_intensity_less_button.grid(row=5, column=3)
+    intensity_label.grid(row=3, column=0)
+    intensity_entry.grid(row=4, column=0)
+    color_label.grid(row=3, column=1)
+    color_entry.grid(row=4, column=1)
+    straight_until_intensity_greater_button.grid(row=7, column=0)
+    straight_until_intensity_less_button.grid(row=8, column=0)
+    straight_until_color_is_button.grid(row=7, column=1)
+    straight_until_color_is_not_button.grid(row=8, column=1)
 
+    delta_label.grid(row=1, column=2)
+    delta_entry.grid(row=2, column=2)
+    go_forward_until_distance_is_less_than_button.grid(row=6, column=0)
+    go_backward_until_distance_is_greater_than_button.grid(row=6, column=1)
+    go_until_distance_is_within_button.grid(row=6, column=2)
+
+    area_label.grid(row=3, column=2)
+    area_entry.grid(row=4, column=2)
+    clockwise_button.grid(row=7, column=2)
+    counterclockwise_button.grid(row=8, column=2)
 
     # Set the Button callbacks:
-    forward_for_seconds_button["command"] = lambda:  handle_seconds(mqtt_sender, time_entry, speed_entry)
-    inches_using_time_button["command"] = lambda: handle_using_time(mqtt_sender, time_entry, speed_entry)
-    inches_using_encoder_button["command"] = lambda: handle_using_encoder(mqtt_sender, time_entry, speed_entry)
+    forward_for_seconds_button["command"] = lambda:  handle_seconds(mqtt_sender, position_entry, speed_entry)
+    inches_using_time_button["command"] = lambda: handle_using_time(mqtt_sender, position_entry, speed_entry)
+    inches_using_encoder_button["command"] = lambda: handle_using_encoder(mqtt_sender, position_entry, speed_entry)
+
     straight_until_intensity_less_button["command"] = lambda: handle_using_color_sensor_less(mqtt_sender, intensity_entry, speed_entry)
     straight_until_intensity_greater_button["command"] = lambda: handle_using_color_sensor_greater(mqtt_sender, intensity_entry, speed_entry)
     straight_until_color_is_button["command"] = lambda: handle_using_color_sensor_is(mqtt_sender, color_entry, speed_entry)
     straight_until_color_is_not_button["command"] = lambda: handle_using_color_sensor_is_not(mqtt_sender, color_entry, speed_entry)
+
+    go_forward_until_distance_is_less_than_button["command"] = lambda: handle_go_forward_until_distance_is_less_than(mqtt_sender, speed_entry, position_entry)
+    go_backward_until_distance_is_greater_than_button["command"] = lambda: handle_go_backward_until_distance_is_greater_than(mqtt_sender, speed_entry, position_entry)
+    go_until_distance_is_within_button["command"] = lambda: handle_go_until_distance_is_within(mqtt_sender, speed_entry, position_entry, delta_entry)
+
+    clockwise_button["command"] = lambda: handle_find_object_clockwise(mqtt_sender, speed_entry, area_entry)
+    counterclockwise_button["command"] = lambda: handle_find_object_counterclockwise(mqtt_sender, speed_entry, area_entry)
+
     return frame
 
 
@@ -249,96 +285,6 @@ def get_sound_system_frame(window, mqtt_sender):
 
     return frame
 
-
-def get_proximity_frame(window, mqtt_sender):
-    """
-      :type  window:       ttk.Frame | ttk.Toplevel
-      :type  mqtt_sender:  com.MqttClient
-    """
-    # Construct the frame to return:
-    frame = ttk.Frame(window, padding=10, borderwidth=5, relief="ridge")
-    frame.grid()
-
-    # Construct the widgets on the frame:
-    frame_label = ttk.Label(frame, text="IR Proximity")
-    speed_label = ttk.Label(frame, text="Speed:")
-    speed_entry = ttk.Entry(frame, width=8)
-
-    inches_label = ttk.Label(frame, text="Inches:")
-    inches_entry = ttk.Entry(frame, width=8)
-
-    delta_label = ttk.Label(frame, text="Within:")
-    delta_entry = ttk.Entry(frame, width=8)
-
-    go_forward_until_distance_is_less_than_button = ttk.Button(frame, text="Go Forward Until Less Than")
-    go_backward_until_distance_is_greater_than_button = ttk.Button(frame, text="Go Backward Until Greater Than")
-    go_until_distance_is_within_button = ttk.Button(frame, text="Go Until Within")
-
-    # Grid the widgets:
-    frame_label.grid(row=0, column=1)
-
-    speed_label.grid(row=1, column=0)
-    inches_label.grid(row=1, column=1)
-    delta_label.grid(row=1, column=2)
-
-    speed_entry.grid(row=2, column=0)
-    inches_entry.grid(row=2, column=1)
-    delta_entry.grid(row=2, column=2)
-
-    go_forward_until_distance_is_less_than_button.grid(row=3, column=0)
-    go_backward_until_distance_is_greater_than_button.grid(row=3, column=1)
-    go_until_distance_is_within_button(row=3, column=2)
-
-    # Set the Button callbacks:
-    go_forward_until_distance_is_less_than_button["command"] = \
-        lambda: handle_go_forward_until_distance_is_less_than(mqtt_sender, speed_entry, inches_entry)
-    go_backward_until_distance_is_greater_than_button["command"] = \
-        lambda: handle_backward_until_distance_is_greater_than(mqtt_sender, speed_entry, inches_entry)
-    go_until_distance_is_within_button["command"] = \
-        lambda: handle_go_until_distance_is_within(mqtt_sender, speed_entry, inches_entry, delta_entry)
-
-    return frame
-
-
-def get_camera_frame(window, mqtt_sender):
-    """
-      :type  window:       ttk.Frame | ttk.Toplevel
-      :type  mqtt_sender:  com.MqttClient
-    """
-    # Construct the frame to return:
-    frame = ttk.Frame(window, padding=10, borderwidth=5, relief="ridge")
-    frame.grid()
-
-    # Construct the widgets on the frame:
-    title = ttk.Label(frame,text='Camera Frame')
-
-    speed_label=ttk.Label(frame, text="Speed")
-    speed_entry= ttk.Entry(frame, width = 8)
-
-    area_label=ttk.Label(frame, text="Area")
-    area_entry= ttk.Entry(frame, width = 8)
-
-    clockwise_button = ttk.Button(frame, text= 'Clockwise search')
-    counterclockwise_button= ttk.Button(frame, text="Counterclockwise search")
-
-
-    # Grid the widgets:
-    title.grid(row=0, column=1)
-
-    speed_label.grid(row=1, column=0)
-    speed_entry.grid(row=1, column=1)
-
-    area_label.grid(row=1, column=2)
-    area_entry.grid(row=1, column=3)
-
-    clockwise_button.grid(row=4, column=1)
-    counterclockwise_button.grid(row=4, column=2)
-
-    # Set the Button callbacks:
-    clockwise_button["command"] = lambda: handle_find_object_clockwise(mqtt_sender, speed_entry, area_entry)
-    counterclockwise_button["command"] = lambda: handle_find_object_counterclockwise(mqtt_sender, speed_entry,area_entry)
-
-    return frame
 
 ###############################################################################
 ###############################################################################
@@ -505,28 +451,7 @@ def handle_using_encoder(mqtt_sender, time_entry, speed_entry):
     print('Forward for', time_entry.get(), 'inches')
     mqtt_sender.send_message("go_straight_for_inches_using_encoder", [int(time_entry.get()), float(speed_entry.get())])
 
-###############################################################################
-# Handlers for Buttons in the SoundSystem frame.
-###############################################################################
-
-
-def handle_beep(mqtt_sender, beep_num_entry):
-    print("I will beep ", beep_num_entry.get(), " times.")
-    mqtt_sender.send_message("beep", [int(beep_num_entry.get())])
-
-
-def handle_tone(mqtt_sender, frequency_entry, duration_entry):
-    print("I will play a tone at frequency ", frequency_entry.get(), " for duration ", duration_entry.get(), ".")
-    mqtt_sender.send_message("tone", [float(frequency_entry.get()), int(duration_entry.get())])
-
-
-def handle_speak(mqtt_sender, text_entry):
-    print("I will speak phrase ", text_entry.get(), ".")
-    mqtt_sender.send_message("speak", [str(text_entry.get())])
-
-###############################################################################
-# Handlers for Buttons in the Color Sensor frame.
-###############################################################################
+# Color Sensor
 
 
 def handle_using_color_sensor_less(mqtt_sender, intensity_entry, speed_entry):
@@ -548,16 +473,8 @@ def handle_using_color_sensor_is_not(mqtt_sender, color_entry, speed_entry):
     print("Go forward with speed =", speed_entry.get(), "until color is ", color_entry.get(), ".")
     mqtt_sender.send_message('go_straight_until_color_is_not', [(color_entry.get()), float(speed_entry.get())])
 
-###############################################################################
-# Handlers for Buttons in the Proximity frame.
-###############################################################################
+# Proximity Sensor
 
-###############################################################################
-# Handlers for Buttons in the Camera frame.
-###############################################################################
-
-
-def handle_find_object_counterclockwise(mqtt_sender,speed_entry,area_entry):
 
 def handle_go_forward_until_distance_is_less_than(mqtt_sender, speed_entry, inches_entry):
     print("Going forward until distance is less than ", inches_entry.get())
@@ -576,16 +493,33 @@ def handle_go_until_distance_is_within(mqtt_sender, speed_entry, inches_entry, d
     mqtt_sender.send_message('go_forward_until_distance_is_less_than',
                              [float(speed_entry.get()), float(inches_entry.get()), float(delta_entry.get())])
 
-def handle_find_object_counterclockwise(mqtt_sender,speed):
+# Camera
+
+
+def handle_find_object_counterclockwise(mqtt_sender, speed_entry, area_entry):
     print("Finding object")
-    mqtt_sender.send_message('find_object_counterclockwise', [float(speed_entry.get()),float(area_entry.get())])
+    mqtt_sender.send_message('find_object_counterclockwise', [float(speed_entry.get()), float(area_entry.get())])
 
 
-def handle_find_object_clockwise(mqtt_sender,speed_entry,area_entry):
+def handle_find_object_clockwise(mqtt_sender, speed_entry, area_entry):
     print("Finding object")
-    mqtt_sender.send_message('find_object_clockwise', [float(speed_entry.get()),float(area_entry.get())])
+    mqtt_sender.send_message('find_object_clockwise', [float(speed_entry.get()), float(area_entry.get())])
+
+###############################################################################
+# Handlers for Buttons in the SoundSystem frame.
+###############################################################################
 
 
-def handle_pick_up_object(mqtt_sender):
-    print('Picking up object')
-    mqtt_sender.send_message('pick_up')
+def handle_beep(mqtt_sender, beep_num_entry):
+    print("I will beep ", beep_num_entry.get(), " times.")
+    mqtt_sender.send_message("beep", [int(beep_num_entry.get())])
+
+
+def handle_tone(mqtt_sender, frequency_entry, duration_entry):
+    print("I will play a tone at frequency ", frequency_entry.get(), " for duration ", duration_entry.get(), ".")
+    mqtt_sender.send_message("tone", [float(frequency_entry.get()), int(duration_entry.get())])
+
+
+def handle_speak(mqtt_sender, text_entry):
+    print("I will speak phrase ", text_entry.get(), ".")
+    mqtt_sender.send_message("speak", [str(text_entry.get())])
