@@ -523,3 +523,5 @@ def handle_tone(mqtt_sender, frequency_entry, duration_entry):
 def handle_speak(mqtt_sender, text_entry):
     print("I will speak phrase ", text_entry.get(), ".")
     mqtt_sender.send_message("speak", [str(text_entry.get())])
+
+#def handle_m2(mqtt_sender, frequency_entry):
