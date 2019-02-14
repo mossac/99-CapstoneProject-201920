@@ -260,10 +260,42 @@ def get_proximity_frame(window, mqtt_sender):
     frame.grid()
 
     # Construct the widgets on the frame:
+    frame_label = ttk.Label(frame, text="IR Proximity")
+    speed_label = ttk.Label(frame, text="Speed:")
+    speed_entry = ttk.Entry(frame, width=8)
+
+    inches_label = ttk.Label(frame, text="Inches:")
+    inches_entry = ttk.Entry(frame, width=8)
+
+    delta_label = ttk.Label(frame, text="Within:")
+    delta_entry = ttk.Entry(frame, width=8)
+
+    go_forward_until_distance_is_less_than_button = ttk.Button(frame, text="Go Forward Until Less Than")
+    go_backward_until_distance_is_greater_than_button = ttk.Button(frame, text="Go Backward Until Greater Than")
+    go_until_distance_is_within_button = ttk.Button(frame, text="Go Until Within")
 
     # Grid the widgets:
+    frame_label.grid(row=0, column=1)
+
+    speed_label.grid(row=1, column=0)
+    inches_label.grid(row=1, column=1)
+    delta_label.grid(row=1, column=2)
+
+    speed_entry.grid(row=2, column=0)
+    inches_entry.grid(row=2, column=1)
+    delta_entry.grid(row=2, column=2)
+
+    go_forward_until_distance_is_less_than_button.grid(row=3, column=0)
+    go_backward_until_distance_is_greater_than_button.grid(row=3, column=1)
+    go_until_distance_is_within_button(row=3, column=2)
 
     # Set the Button callbacks:
+    go_forward_until_distance_is_less_than_button["command"] = \
+        lambda: handle_go_forward_until_distance_is_less_than(mqtt_sender, speed_entry, inches_entry)
+    go_backward_until_distance_is_greater_than_button["command"] = \
+        lambda: handle_backward_until_distance_is_greater_than(mqtt_sender, speed_entry, inches_entry)
+    go_until_distance_is_within_button["command"] = \
+        lambda: handle_go_until_distance_is_within(mqtt_sender, speed_entry, inches_entry, delta_entry)
 
     return frame
 
@@ -496,6 +528,24 @@ def handle_using_color_sensor_is_not(mqtt_sender, color_entry, speed_entry):
 ###############################################################################
 # Handlers for Buttons in the Proximity frame.
 ###############################################################################
+
+
+def handle_go_forward_until_distance_is_less_than(mqtt_sender, speed_entry, inches_entry):
+    print("Going forward until distance is less than ", inches_entry.get())
+    mqtt_sender.send_message('go_forward_until_distance_is_less_than',
+                             [float(speed_entry.get()), float(inches_entry.get())])
+
+
+def handle_go_backward_until_distance_is_greater_than(mqtt_sender, speed_entry, inches_entry):
+    print("Going backward until distance is greater than ", inches_entry.get())
+    mqtt_sender.send_message('go_backward_until_distance_is_greater_than',
+                             [float(speed_entry.get()), float(inches_entry.get())])
+
+
+def handle_go_until_distance_is_within(mqtt_sender, speed_entry, inches_entry, delta_entry):
+    print("Going until distance is within ", delta_entry.get(), " of ", inches_entry.get())
+    mqtt_sender.send_message('go_forward_until_distance_is_less_than',
+                             [float(speed_entry.get()), float(inches_entry.get()), float(delta_entry.get())])
 
 def handle_find_object_counterclockwise(mqtt_sender,speed):
     print("Finding object")
