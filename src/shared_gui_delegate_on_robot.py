@@ -67,6 +67,7 @@ class DelegateReceiving(object):
         self.robot.sound_system.speech_maker.speak(text)
 
     def m3_pick_up(self, initial_rate, increase_rate, speed):
+        starting_distance = self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
         self.robot.drive_system.go_until_distance_is_within(0.1, 1, speed)
         rate = 1 / initial_rate
         self.robot.led_system.left_led.turn_on()
@@ -85,6 +86,9 @@ class DelegateReceiving(object):
                 self.robot.led_system.left_led.turn_off()
                 self.robot.led_system.right_led.turn_off()
             state = state % 4
-            time.sleep(1 - rate)
+            time.sleep(rate)
+            rate = (self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()) / starting_distance
             rate += 1 / ((1 / rate) + increase_rate)
         self.robot.arm_and_claw.raise_arm()
+        self.robot.led_system.left_led.turn_off()
+        self.robot.led_system.right_led.turn_off()
