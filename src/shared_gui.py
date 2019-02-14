@@ -470,7 +470,7 @@ def handle_using_color_sensor_is(mqtt_sender, color_entry, speed_entry):
 
 
 def handle_using_color_sensor_is_not(mqtt_sender, color_entry, speed_entry):
-    print("Go forward with speed =", speed_entry.get(), "until color is ", color_entry.get(), ".")
+    print("Go forward with speed =", speed_entry.get(), "until color is not ", color_entry.get(), ".")
     mqtt_sender.send_message('go_straight_until_color_is_not', [(color_entry.get()), float(speed_entry.get())])
 
 # Proximity Sensor
