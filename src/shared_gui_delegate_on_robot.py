@@ -128,7 +128,7 @@ class DelegateReceiving(object):
     def m2_pick_up(self, initial_rate, increase_rate, speed):
         starting_distance = self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
         frequency = initial_rate
-        while self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()>=0.1:
+        while self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()>=1:
             frequency=increase_rate+frequency
             self.go_forward_until_distance_is_less_than(speed,1)
             self.robot.sound_system.tone_maker.play_tone(frequency,0.5)
