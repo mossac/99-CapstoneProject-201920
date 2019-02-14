@@ -73,17 +73,17 @@ class DelegateReceiving(object):
         self.robot.drive_system.go_straight_for_inches_using_encoder(int(time_entry), float(speed_entry))
 
     # Color Sensor
-    def go_straight_until_intensity_is_less_than(self,intensity_entry,speed_entry):
-        self.robot.drive_system.go_straight_until_intensity_is_less_than(float(intensity_entry),float(speed_entry))
+    def go_straight_until_intensity_is_less_than(self, intensity_entry, speed_entry):
+        self.robot.drive_system.go_straight_until_intensity_is_less_than(float(intensity_entry), float(speed_entry))
 
     def go_straight_until_intensity_is_greater_than(self, intensity_entry, speed_entry):
-        self.robot.drive_system.go_straight_until_intensity_is_greater_than(float(intensity_entry),float(speed_entry))
+        self.robot.drive_system.go_straight_until_intensity_is_greater_than(float(intensity_entry), float(speed_entry))
 
     def go_straight_until_color_is(self,color_entry,speed_entry):
-        self.robot.drive_system.go_straight_until_color_is((color_entry),float(speed_entry))
+        self.robot.drive_system.go_straight_until_color_is(color_entry, float(speed_entry))
 
     def go_straight_until_color_is_not(self,color_entry,speed_entry):
-        self.robot.drive_system.go_straight_until_color_is_not((color_entry),float(speed_entry))
+        self.robot.drive_system.go_straight_until_color_is_not(color_entry, float(speed_entry))
 
     # Proximity
 
