@@ -209,7 +209,6 @@ class DelegateReceiving(object):
             self.robot.sound_system.beeper.beep()
             distance = self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
             if distance < 2.5:
-                self.robot.arm_and_claw.raise_arm()
                 break
             try:
                 time.sleep(1 / rate)
