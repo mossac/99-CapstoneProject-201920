@@ -200,31 +200,28 @@ class DelegateReceiving(object):
 
     def m1_pick_up(self, initial_rate, increase_rate,speed):
         total = 0
-        for x in range(40):
+        for k in range(40):
             total += self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
         starting_distance = total / 40
         self.go_straight_for_inches_using_encoder(starting_distance, speed)
-        rate = initial_rate - 1
+        frequency = initial_rate - 1
         while True:
             self.robot.sound_system.beeper.beep()
             distance = self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
-            print(distance)
             if distance < 1.2:
                 break
-            try:
-                time.sleep(1 / rate)
-                rate = initial_rate - 1 + increase_rate * (starting_distance / (1 - distance))
-            except ValueError or ZeroDivisionError:
-                rate = initial_rate
+            time.sleep(1 / frequency)
+            frequency = initial_rate - 1 + increase_rate * (
+                    starting_distance / (1 - self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()))
         self.robot.drive_system.stop()
         self.robot.arm_and_claw.raise_arm()
 
     def m1_camera_pick_up(self, initial_rate, increase_rate, speed, direction, area):
         if direction == 'left' or 'Left':
             self.robot.drive_system.spin_counterclockwise_until_sees_object(speed, area)
-            time.sleep(3)
+
             self.m1_pick_up(initial_rate, increase_rate, speed)
         elif direction == 'right' or 'Right':
             self.robot.drive_system.spin_clockwise_until_sees_object(speed, area)
-            time.sleep(3)
+
             self.m1_pick_up(initial_rate, increase_rate, speed)
