@@ -215,6 +215,7 @@ class DelegateReceiving(object):
                 rate = initial_rate - 1 + increase_rate * (starting_distance / (1 - distance))
             except ValueError or ZeroDivisionError:
                 rate = initial_rate
+                time.sleep(1/initial_rate)
                 continue
         self.robot.drive_system.stop()
         self.robot.arm_and_claw.raise_arm()
