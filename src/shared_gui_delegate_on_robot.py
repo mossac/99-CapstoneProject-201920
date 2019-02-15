@@ -219,9 +219,9 @@ class DelegateReceiving(object):
     def m1_camera_pick_up(self, initial_rate, increase_rate, speed, direction, area):
         if direction == 'left' or 'Left':
             self.robot.drive_system.spin_counterclockwise_until_sees_object(speed, area)
-
+            time.sleep(3)
             self.m1_pick_up(initial_rate, increase_rate, speed)
         elif direction == 'right' or 'Right':
             self.robot.drive_system.spin_clockwise_until_sees_object(speed, area)
-
+            time.sleep(3)
             self.m1_pick_up(initial_rate, increase_rate, speed)
