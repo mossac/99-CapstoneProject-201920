@@ -131,15 +131,14 @@ def handle_pick_up(mqtt_sender, initial_rate_entry, increase_rate_entry, speed_e
                                             float(increase_rate_entry.get()),
                                             float(speed_entry.get())])
 
+
 def handle_m1_cam_pick_up(mqtt_sender,direction_entry,initial_rate_entry,increase_rate_entry,speed_entry,area_entry):
     print('Picking up using camera')
-    mqtt_sender.send_message("m1_camera_pick__up", [float(initial_rate_entry.get()),
+    mqtt_sender.send_message("m1_camera_pick_up", [float(initial_rate_entry.get()),
                                                     float(increase_rate_entry.get()),
                                                     float(speed_entry.get()),
-                                                    float(direction_entry.get()),
+                                                    direction_entry.get(),
                                                     float(area_entry.get())])
-
-
 
 
 def grid_frames(teleop_frame, arm_frame, control_frame, drive_frame,proximity_frame):
