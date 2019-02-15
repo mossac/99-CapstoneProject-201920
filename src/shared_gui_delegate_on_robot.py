@@ -204,15 +204,19 @@ class DelegateReceiving(object):
             total += self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
         starting_distance = total / 40
         self.go_straight_for_inches_using_encoder(starting_distance, speed)
-        frequency = initial_rate - 1
+        rate = initial_rate - 1
         while True:
             self.robot.sound_system.beeper.beep()
             distance = self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
-            if distance < 1.2:
+            if distance < 2.5:
                 break
-            time.sleep(1 / frequency)
-            frequency = initial_rate - 1 + increase_rate * (
-                    starting_distance / (1 - self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()))
+            try:
+                time.sleep(1 / rate)
+                rate = initial_rate - 1 + increase_rate * (starting_distance / (1 - distance))
+            except ValueError or ZeroDivisionError:
+                rate = initial_rate
+                continue
+
         self.robot.drive_system.stop()
         self.robot.arm_and_claw.raise_arm()
 
