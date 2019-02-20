@@ -7,6 +7,7 @@
   Winter term, 2018-2019.
 """
 
+import mqtt_remote_method_calls as com
 import time
 
 
@@ -16,6 +17,7 @@ class DelegateReceiving(object):
         ''' :type robot:  rosebot.RoseBot '''
         self.robot = robot
         self.is_time_to_stop = False
+        self.mqtt_sender = None
 
     ###############################################################################
     # From Teleoperation Frame
@@ -41,10 +43,18 @@ class DelegateReceiving(object):
     ###############################################################################
 
     def raise_arm(self):
+        print('h')
         self.robot.arm_and_claw.raise_arm()
+        print('j')
+        if self.robot.sensor_system.color_sensor.get_color() is 'White':
+            print('m')
+            self.mqtt_sender.send_message('can_score')
+
 
     def lower_arm(self):
         self.robot.arm_and_claw.lower_arm()
+        if self.robot.sensor_system.color_sensor.get_color() is 'Black':
+            self.mqtt_sender.send_message('add_point')
 
     def calibrate_arm(self):
         self.robot.arm_and_claw.calibrate_arm()
@@ -140,6 +150,7 @@ class DelegateReceiving(object):
                         starting_distance / (1 - self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()))
         self.robot.drive_system.stop()
         self.robot.arm_and_claw.raise_arm()
+        self.mqtt_sender.send_message('can_score')
 
     def m3_pick_up(self, initial_rate, increase_rate, speed):
         total = 0
@@ -203,20 +214,16 @@ class DelegateReceiving(object):
         for k in range(40):
             total += self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
         starting_distance = total / 40
-        rate = initial_rate - 1
-        self.forward(speed, speed)
+        self.go_straight_for_inches_using_encoder(starting_distance, speed)
+        frequency = initial_rate - 1
         while True:
             self.robot.sound_system.beeper.beep()
             distance = self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
-            if distance < 2.5:
+            if distance < 1.2:
                 break
-            try:
-                time.sleep(1 / rate)
-                rate = initial_rate - 1 + increase_rate * (starting_distance / (1 - distance))
-            except ValueError or ZeroDivisionError:
-                rate = initial_rate
-                time.sleep(1/initial_rate)
-                continue
+            time.sleep(1 / frequency)
+            frequency = initial_rate - 1 + increase_rate * (
+                    starting_distance / (1 - self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()))
         self.robot.drive_system.stop()
         self.robot.arm_and_claw.raise_arm()
 
@@ -229,3 +236,19 @@ class DelegateReceiving(object):
             self.robot.drive_system.spin_clockwise_until_sees_object(speed, area)
             time.sleep(3)
             self.m1_pick_up(initial_rate, increase_rate, speed)
+
+
+    def m1_line_follow(self,speed):
+        start = self.robot.sensor_system.color_sensor.get_color()
+        self.robot.drive_system.go(speed,speed)
+        while True:
+            current = self.robot.sensor_system.color_sensor.get_color()
+            Error = current - start
+            time.sleep(.1)
+            self.robot.drive_system.go((50+(Error * -speed)),(50+(Error * speed)))
+            if current is 'Red':
+                break
+        self.robot.drive_system.stop()
+
+
+
