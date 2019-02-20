@@ -100,6 +100,9 @@ class DelegateReceiving(object):
     def go_forward_until_distance_is_less_than(self, speed, inches):
         self.robot.drive_system.go_forward_until_distance_is_less_than(inches, speed)
 
+    def go_forward_danger(self, speed, inches):
+        self.robot.go_forward_danger(int(inches), int(speed))
+
     def go_backward_until_distance_is_greater_than(self, speed, inches):
         self.robot.drive_system.go_backward_until_distance_is_greater_than(inches, speed)
 
@@ -133,24 +136,15 @@ class DelegateReceiving(object):
 
 
 
-    def m2_pick_up(self, initial_rate, increase_rate, speed):
-        total = 0
-        for k in range(40):
-            total += self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
-        starting_distance = total / 40
-        self.go_straight_for_inches_using_encoder(starting_distance, speed)
-        frequency = initial_rate -1
-        while True:
-            self.robot.sound_system.tone_maker.play_tone(frequency,1)
-            distance = self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()
-            if distance < 1.2:
-                break
-            time.sleep(1 / frequency)
-            frequency = initial_rate - 1 + increase_rate * (
-                        starting_distance / (1 - self.robot.sensor_system.ir_proximity_sensor.get_distance_in_inches()))
-        self.robot.drive_system.stop()
+##############################################
+    #m2_pick_up
+##############################################
+    def go_and_pick(self, initial,step, speed):
+        print("receive go_and_pick")
+        self.robot.drive_system.go_and_pick(int(initial), int(step),int(speed))
         self.robot.arm_and_claw.raise_arm()
         self.mqtt_sender.send_message('can_score')
+
 
     def m3_pick_up(self, initial_rate, increase_rate, speed):
         total = 0
@@ -193,11 +187,11 @@ class DelegateReceiving(object):
         if direction == 'left':
             self.robot.drive_system.spin_counterclockwise_until_sees_object(speed, area)
             time.sleep(3)
-            self.m1_pick_up(initial_rate, increase_rate, speed)
+            self.go_and_pick(initial_rate, increase_rate, speed)
         elif direction == 'right':
             self.robot.drive_system.spin_clockwise_until_sees_object(speed, area)
             time.sleep(3)
-            self.m2_pick_up(initial_rate, increase_rate, speed)
+            self.go_and_pick(initial_rate, increase_rate, speed)
 
     def m3_camera_pick_up(self, direction, initial_rate, increase_rate, speed, area):
         if direction == 'left':

@@ -38,6 +38,32 @@ class RoseBot(object):
         self.beacon_system = BeaconSystem()
         self.display_system = DisplaySystem()
 
+    def go_forward_danger(self, inches, speed):
+
+        self.drive_system.go(speed, speed)
+
+        if self.sensor_system.camera.get_biggest_blob().get_area()<100:
+                while True:
+                    if self.sensor_system.ir_proximity_sensor.get_distance_in_inches() < inches:
+                        self.drive_system.stop()
+                        self.sound_system.say_a_phrase('Wall detected')
+                        break
+
+        else:
+            print("receive pick up")
+            while True:
+                distance_in = self.sensor_system.ir_proximity_sensor.get_distance_in_inches()
+                for k in range(2):
+                    self.sound_system.tone_maker.play_tone(960,300).wait()
+                    self.sound_system.tone_maker.play_tone(770,300).wait()
+                if distance_in < 3:
+                    break
+            self.drive_system.stop()
+            self.arm_and_claw.raise_arm()
+
+
+
+
 
 ###############################################################################
 #    DriveSystem
@@ -69,9 +95,9 @@ class DriveSystem(object):
         self.sensor_system = sensor_system
         self.left_motor = Motor('B')
         self.right_motor = Motor('C')
-
+        self.arm_and_claw = ArmAndClaw
         self.wheel_circumference = 1.3 * math.pi
-
+        self.sound_system=SoundSystem
     # -------------------------------------------------------------------------
     # Methods for driving with no external sensor (just the built-in encoders).
     # -------------------------------------------------------------------------
@@ -228,6 +254,32 @@ class DriveSystem(object):
             self.go_backward_until_distance_is_greater_than(inches - delta, speed)
         elif self.sensor_system.ir_proximity_sensor.get_distance_in_inches() >= inches:
             self.go_forward_until_distance_is_less_than(inches + delta, speed)
+
+    def go_and_increase_frequency(self,initial_frequency,frequency_step,speed):
+        robot=RoseBot()
+        init_distance=99999
+        frequency=initial_frequency
+        # Infrared=InfraredProximitySensor()
+        # ToneMaker().play_tone(frequency, 1000)
+        while True:
+            self.go(speed,speed)
+            distance = self.sensor_system.ir_proximity_sensor.get_distance_in_inches()
+            if distance<init_distance:
+                print(frequency)
+                frequency = frequency + frequency_step
+                init_distance=distance
+            ToneMaker().play_tone(frequency, 1000)
+            if distance< 3:
+                self.stop()
+                break
+
+    def go_and_pick(self,initial_frequency,step_frequency,speed):
+        self.go_and_increase_frequency(initial_frequency,step_frequency,speed)
+
+
+
+
+
 
     # -------------------------------------------------------------------------
     # Methods for driving that use the infrared beacon sensor.
@@ -429,6 +481,9 @@ class SoundSystem(object):
         self.tone_maker = ToneMaker()
         self.speech_maker = SpeechMaker()
         self.song_maker = SongMaker()
+
+    def say_a_phrase(self, n):
+        self.speech_maker.speak(n).wait()
 
 
 ###############################################################################
@@ -1021,3 +1076,5 @@ class BeaconButton(object):
 ###############################################################################
 class BrickButton(object):
     pass
+
+
