@@ -1,8 +1,6 @@
 import mqtt_remote_method_calls as com
 import tkinter
 from tkinter import ttk
-import shared_gui
-import m1_delegate
 import time
 
 
@@ -18,17 +16,21 @@ class LaptopHandler(object):
         root1.title("Scoreboard")
         root1.geometry("300x300")
 
-        canvas = tkinter.Canvas(root1, width='800', height='800', bg='white')
+        canvas = tkinter.Canvas(root1, width='800', height='800', bg='blue')
         canvas.grid()
         canvas.create_text(150, 150, text="Points:"+ str(self.points))
 
-
-
     def add_point(self):
         print('recieved')
-        self.points =self.points+1
-        self.can_score = False
+        if self.can_score is True:
+            self.points =self.points+1
+            self.can_score = False
 
     def can_score(self):
         print('recieved')
         self.can_score = True
+
+    def sub_point(self):
+        print("Removing Point")
+        self.points = self.points - 1
+

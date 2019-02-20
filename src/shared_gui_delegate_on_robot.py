@@ -46,14 +46,14 @@ class DelegateReceiving(object):
         print('h')
         self.robot.arm_and_claw.raise_arm()
         print('j')
-        if self.robot.sensor_system.color_sensor.get_color() is 'White':
+        if self.robot.sensor_system.color_sensor.get_color() is 6:
             print('m')
             self.mqtt_sender.send_message('can_score')
 
 
     def lower_arm(self):
         self.robot.arm_and_claw.lower_arm()
-        if self.robot.sensor_system.color_sensor.get_color() is 'Black':
+        if self.robot.sensor_system.color_sensor.get_color() is 1:
             self.mqtt_sender.send_message('add_point')
 
     def calibrate_arm(self):
@@ -239,16 +239,45 @@ class DelegateReceiving(object):
 
 
     def m1_line_follow(self,speed):
+        print('test')
         start = self.robot.sensor_system.color_sensor.get_color()
         self.robot.drive_system.go(speed,speed)
+        print("test 2")
+        time.sleep(.5)
         while True:
+            self.robot.drive_system.go(speed, speed)
+            print("test 3")
             current = self.robot.sensor_system.color_sensor.get_color()
             Error = current - start
             time.sleep(.1)
-            self.robot.drive_system.go((50+(Error * -speed)),(50+(Error * speed)))
-            if current is 'Red':
+            counter = 1
+            if Error is 4:
+                print("test 4")
                 break
+            while Error is not 0 or 4:
+                self.robot.drive_system.go((-speed),(speed))
+                time.sleep(.1*counter)
+                if start or 5 is self.robot.sensor_system.color_sensor.get_color():
+                    break
+                self.robot.drive_system.go((speed+5), (-speed))
+                time.sleep(.1*counter)
+                if start or 5 is self.robot.sensor_system.color_sensor.get_color():
+                    break
+                counter = counter +1
+            if Error is 4:
+                print("test 4")
+                break
+
         self.robot.drive_system.stop()
+
+    def Add_Point(self):
+        print('recieved')
+        self.mqtt_sender.send_message('add_point')
+
+    def Sub_Point(self):
+        print('recieved')
+        self.mqtt_sender.send_message('sub_point')
+
 
 
 

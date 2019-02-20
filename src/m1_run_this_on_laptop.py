@@ -24,11 +24,8 @@ def main():
     root1 = tkinter.Tk()
 
     LaptopHandler = m1_delegate.LaptopHandler(root1)
-    #mqtt_reciever = com.MqttClient(LaptopHandler)
-    #mqtt_reciever.connect_to_ev3()
     mqtt_sender = com.MqttClient(LaptopHandler)
     mqtt_sender.connect_to_ev3()
-    points = 0
 
     # -------------------------------------------------------------------------
     # The root TK object for the GUI:
@@ -51,7 +48,7 @@ def main():
     # Frames that are particular to my individual contributions to the project.
     # -------------------------------------------------------------------------
     # DONE: Implement and call get_my_frames(...)
-    line_frame,teleop_frame = get_personal_frames(main_frame, mqtt_sender,points)
+    line_frame , teleop_frame = get_personal_frames(main_frame, mqtt_sender)
 
     # -------------------------------------------------------------------------
     # Grid the frames.
@@ -61,7 +58,7 @@ def main():
     # -------------------------------------------------------------------------
     # The event loop:
     # -------------------------------------------------------------------------
-    real_thing(main_frame)
+    #real_thing(LaptopHandler)
 
     root.mainloop()
 
@@ -75,8 +72,8 @@ def get_shared_frames(main_frame, mqtt_sender):
     return teleop_frame
 
 
-def get_personal_frames(main_frame,mqtt_sender,points):
-   line_frame = get_line_follow(main_frame, mqtt_sender,points)
+def get_personal_frames(main_frame,mqtt_sender):
+   line_frame = get_line_follow(main_frame, mqtt_sender)
    teleop_frame = get_teleoperation_frame(main_frame, mqtt_sender)
 
    return  line_frame, teleop_frame
@@ -131,29 +128,28 @@ def get_proximity_sensor_frame(window, mqtt_sender):
     area_label.grid(row=4, column=0)
     area_entry.grid(row=4, column=1)
 
-
     # Set the Button callbacks:
     pick_up_button["command"] = lambda: handle_pick_up(mqtt_sender, initial_rate_entry, increase_rate_entry, speed_entry)
     m1_cam_pick_up['command']= lambda: handle_m1_cam_pick_up(mqtt_sender,direction_entry,initial_rate_entry,increase_rate_entry,speed_entry,area_entry)
 
     return frame
 
-def get_line_follow(window, mqtt_sender,points):
-    error_message = " "
-    points = points
+
+def get_line_follow(window, mqtt_sender):
+
     frame = ttk.Frame(window, padding=10, borderwidth=5, relief="ridge")
     frame.grid()
 
     title = ttk.Label(frame,width = 16, text ='Line Follow')
-    scale_title =ttk.Label(frame, text = 'Speed')
+    scale_title = ttk.Label(frame, text = 'Speed')
 
-    scale =ttk.Scale(frame, from_=0, to=50)
+    scale = ttk.Scale(frame, from_=25, to=75)
 
-    point = ttk.Label(frame ,text = "Points:" + str(points))
+    Sub_Point = ttk.Button(frame ,text = 'Subtract Point')
 
     lets_go_button = ttk.Button(frame, text = 'Lets Go!')
     pick_up_button = ttk.Button(frame, text = 'Pick up')
-    Error = ttk.Label(frame, text = error_message)
+    Add_Point = ttk.Button(frame, text = "Add Point")
 
     title.grid(row=0, column=0)
 
@@ -162,11 +158,13 @@ def get_line_follow(window, mqtt_sender,points):
     lets_go_button.grid(row=2,column=0)
     pick_up_button.grid(row=2, column=1)
 
-    point.grid(row=3, column=0)
-    Error.grid(row=4,column = 0)
+    Sub_Point.grid(row=3, column=1)
+    Add_Point.grid(row=3,column = 0)
 
     lets_go_button['command']= lambda : handle_lets_go(mqtt_sender,scale)
     pick_up_button['command'] = lambda: handle_pick_up(mqtt_sender, 5, 5, scale)
+    Sub_Point['command']= lambda: handle_sub_point(mqtt_sender)
+    Add_Point['command']= lambda: handle_add_point(mqtt_sender)
 
 
 
@@ -229,7 +227,6 @@ def get_teleoperation_frame(window, mqtt_sender):
     stop_button["command"] = lambda: handle_stop(mqtt_sender)
     drop_button['command'] = lambda: handle_lower_arm(mqtt_sender)
     grab_button["command"]=lambda: handle_raise_arm(mqtt_sender)
-
 
     return frame
 
@@ -306,15 +303,19 @@ def handle_stop(mqtt_sender):
 
 def handle_lets_go(mqtt_sender,scale):
     print('Line Following')
-    mqtt_sender.send_message('m1_line_follow',[float(scale.get())])
+    mqtt_sender.send_message("m1_line_follow",[float(scale.get())])
+
+def handle_add_point(mqtt_sender):
+    mqtt_sender.send_message('Add_Point')
+
+
+def handle_sub_point(mqtt_sender):
+    mqtt_sender.send_message('Sub_Point')
 
 
 
 
-
-def real_thing(main_frame):
-
-    LaptopHandler = m1_delegate.LaptopHandler(main_frame)
+def real_thing(LaptopHandler):
     mqtt_reciever = com.MqttClient(LaptopHandler)
     mqtt_reciever.connect_to_ev3()
 
