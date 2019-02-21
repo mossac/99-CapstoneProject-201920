@@ -78,7 +78,6 @@ class DelegateReceiving(object):
 
     def return_to_sender_stage_3(self, speed):
         """ Returns to the starting location. """
-        self.robot.arm_and_claw.lower_arm()
         print(self.distance_away, self.distance_left)
         needed_degrees = 180 - (180 * math.atan(self.distance_away / self.distance_left) / math.pi)
         print("Needed degrees:", needed_degrees)
@@ -87,6 +86,7 @@ class DelegateReceiving(object):
         distance = math.sqrt((self.distance_away ** 2) + (self.distance_left ** 2))
         print("Distance:", distance)
         self.robot.drive_system.go_straight_for_inches_using_encoder(distance, speed)
+        self.robot.arm_and_claw.lower_arm()
         self.stage = 99
 
     def quit(self):
