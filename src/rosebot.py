@@ -146,7 +146,7 @@ class DriveSystem(object):
         deg_inches = 360 / self.left_motor.WheelCircumference
         needed = inches * deg_inches
         self.go(speed, speed)
-        while abs(self.left_motor.get_position() < needed):
+        while abs(self.left_motor.get_position()) < needed:
             time.sleep(0.01)
         self.stop()
 
@@ -403,7 +403,7 @@ class ArmAndClaw(object):
         self.motor.turn_on(-100)
         while True:
             position = abs(self.motor.get_position())
-            if position >= (13.0 * 360):
+            if position >= (12.5 * 360):
                 self.motor.turn_off()
                 break
         self.motor.reset_position()
@@ -437,14 +437,7 @@ class ArmAndClaw(object):
         The robot must have previously calibrated its Arm.
         """
         if self.calibration is 1:
-            if self.motor.get_position() > 0:
-                while True:
-                    self.motor.turn_on(-100)
-                    if self.motor.get_position() is 0:
-                        self.motor.turn_off()
-                        break
-        else:
-            self.calibrate_arm()
+            self.move_arm_to_position(0)
 
 
 ###############################################################################

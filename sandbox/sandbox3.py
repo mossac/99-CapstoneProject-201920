@@ -3,20 +3,15 @@
 
 # James Kelley
 
-# out 16 inches
-# distance needed--0 inch
+import rosebot
+import random
 
-# at 16 inches--1 hz
-# at 8 inches--2 hz
-# at 4 inches--4 hz
-# at 2 inches--8 hz
+note = 600
 
 while True:
+    mono = random.randint(0, 2020)
+    if mono > note:
+        break
+    print(mono)
 
-    starting_distance = self.robot.sensor.ir.get()
-
-    initial = 1
-
-    while True:
-        rate = (starting_distance / dist) * increase
-        print(rate)
+print(mono, note)

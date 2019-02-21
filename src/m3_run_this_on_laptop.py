@@ -22,8 +22,9 @@ def main():
     # -------------------------------------------------------------------------
     # Construct and connect the MQTT Client:
     # -------------------------------------------------------------------------
-    mqtt_sender = com.MqttClient()
-    mqtt_sender.connect_to_ev3()
+    delegate_receiving = DelegateReceiving()
+    mqtt_client = com.MqttClient(delegate_receiving)
+    mqtt_client.connect_to_ev3()
 
     # -------------------------------------------------------------------------
     # The root TK object for the GUI:
@@ -40,22 +41,103 @@ def main():
     # -------------------------------------------------------------------------
     # Sub-frames for the shared GUI that the team developed:
     # -------------------------------------------------------------------------
-    teleop_frame, arm_frame, control_frame, drive_frame, sound_frame = get_shared_frames(main_frame, mqtt_sender)
+    # teleop_frame, arm_frame, control_frame, drive_frame, sound_frame = get_shared_frames(main_frame, mqtt_sender)
 
     # -------------------------------------------------------------------------
     # Frames that are particular to my individual contributions to the project.
     # -------------------------------------------------------------------------
-    proximity_frame, camera_frame = get_my_frames(main_frame, mqtt_sender)
+    # proximity_frame, camera_frame = get_my_frames(main_frame, mqtt_sender)
+    return_to_sender_frame, distance_forward_display, distance_out_display = get_return_to_sender_frame(main_frame, mqtt_client)
+    delegate_receiving.distance_forward_display, delegate_receiving.distance_out_display = distance_forward_display, distance_out_display
 
     # -------------------------------------------------------------------------
     # Grid the frames.
     # -------------------------------------------------------------------------
-    grid_frames(teleop_frame, arm_frame, control_frame, drive_frame, sound_frame, proximity_frame, camera_frame)
+    # grid_frames(teleop_frame, arm_frame, control_frame, drive_frame, sound_frame, proximity_frame, camera_frame)
+    return_to_sender_frame.grid()
 
     # -------------------------------------------------------------------------
     # The event loop:
     # -------------------------------------------------------------------------
+
     root.mainloop()
+
+
+class DelegateReceiving(object):
+
+    def __init__(self):
+        ''' :type return_to_sender_frame:  ttk.Frame '''
+        self.distance_forward_display = None
+        self.distance_out_display = None
+
+    def change_distance_forward(self, distance_forward_value):
+        """ Changes the label on the tkinter to the new value. """
+        print(distance_forward_value)
+        new_text = '{} inches'.format(distance_forward_value)
+        self.distance_forward_display['text'] = new_text
+
+    def change_distance_out(self, distance_out_value):
+        """ Changes the label on the tkinter to the new value. """
+        print(distance_out_value)
+        new_text = '{} inches'.format(distance_out_value)
+        self.distance_out_display['text'] = new_text
+
+
+def get_return_to_sender_frame(main_frame, mqtt_sender):
+    """ Constructs the return_to_sender frame which is used in Sprint 3. """
+    # Construct the frame to return:
+    frame = ttk.Frame(main_frame, padding=10, borderwidth=5, relief="ridge")
+    frame.grid()
+
+    # Construct the widgets on the frame:
+    frame_label = ttk.Label(frame, text="Return to Sender")
+
+    speed_label = ttk.Label(frame, text="Speed:")
+    speed_slider = ttk.Scale(frame, from_=0, to_=100)
+
+    distance_forward_label, distance_forward_display = make_label_and_display(frame, "Distance To Wall:")
+
+    distance_out_label, distance_out_display = make_label_and_display(frame, "Length On Wall:")
+
+    pick_up_button = ttk.Button(frame, text="Pick Up Package")
+    quit_button = ttk.Button(frame, text="Stop Robot")
+
+    # Grid the widgets:
+    grid_widgets([frame_label, speed_label, speed_slider, distance_forward_label, distance_forward_display,
+                  distance_out_label, distance_out_display, pick_up_button, quit_button])
+
+    # Set the Button callbacks:
+    pick_up_button["command"] = lambda: handle_return_to_sender(mqtt_sender, speed_slider)
+    quit_button["command"] = lambda: handle_quit(mqtt_sender)
+
+    return frame, distance_forward_display, distance_out_display
+
+
+def make_label_and_display(frame, text):
+    """ Constructs and returns a label and a display label corresponding to the text. """
+    label = ttk.Label(frame, text=text)
+    diplay_text = str("None")
+    display = ttk.Label(frame, text=diplay_text)
+
+    return label, display
+
+
+def grid_widgets(sequence_of_widgets):
+    """ Grids all widgets in the sequence into a nice looking frame. """
+    for x in range(len(sequence_of_widgets)):
+        sequence_of_widgets[x].grid(row=((x + 1) // 2), column=((x + 1) % 2))
+
+
+def handle_return_to_sender(mqtt_sender, speed_slider):
+    """ In response to pressing the 'Pick up package' button, this sends the appropriate MQTT message. """
+    print("Picking up package.")
+    mqtt_sender.send_message("return_to_sender_stage_1", [float(speed_slider.get())])
+
+
+def handle_quit(mqtt_sender):
+    """ In response to pressing the 'quit' button, this stops the robot's program. """
+    print("Stopping Robot")
+    mqtt_sender.send_message("quit")
 
 
 def get_shared_frames(main_frame, mqtt_sender):
